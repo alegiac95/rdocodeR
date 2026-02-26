@@ -1,15 +1,31 @@
 # rdocodeR
 
-<img src="man/figures/logo.png" align="right" height="220" alt="rdocodeR hex logo" />
+<p align="center">
+  <img src="man/figures/logo.png" height="260" alt="rdocodeR hex logo" />
+</p>
 
-`rdocodeR` wraps your RDoC workflow into an installable R package and uses the
-`ggplot2` circular plot as the default plotting backend.
+`rdocodeR` is an R package for **RDoC-based** decoding and visualization workflows.
 
-## Install locally
+## What Is RDoC?
+
+The **Research Domain Criteria (RDoC)** framework (NIMH) organizes mental function
+across core domains (for example cognitive systems, valence systems, and arousal/regulatory systems)
+instead of relying only on symptom-based diagnostic categories.
+
+## Package Overview
+
+`rdocodeR` provides tools to:
+
+- decode an input brain overlay against bundled RDoC term maps (`rdoc_decode()`)
+- save decoding results as a TSV table
+- generate publication-style circular RDoC plots with `ggplot2` (`plot_rdoc_gg()`)
+- customize labels, significance highlighting, palettes, and legends
+
+## Install
 
 ```r
 install.packages("devtools")
-devtools::install("/Users/alessio/rdocodeR")
+devtools::install_github("alegiac95/rdocodeR")
 ```
 
 ## Quick start (plot existing TSV results)
