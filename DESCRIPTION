@@ -1,0 +1,26 @@
+Package: rdocodeR
+Title: RDoC Decoding and Circular Visualizations
+Version: 0.1.0
+Authors@R: 
+    person("Alessio", "User", , "alessio@example.com", role = c("aut", "cre"))
+Description: Provides tools for Research Domain Criteria (RDoC) analysis,
+    including a ggplot2-based circular correlation plot, palette helpers,
+    legend plotting utilities, and an optional decoding pipeline for
+    FreeSurfer overlays.
+License: MIT + file LICENSE
+Depends: 
+    R (>= 4.1)
+Imports: 
+    colorspace,
+    geomtextpath,
+    ggnewscale,
+    ggplot2,
+    MetBrewer,
+    RColorBrewer,
+    viridisLite
+Suggests:
+    fsdecode,
+    fsnull
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3

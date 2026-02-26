@@ -1,0 +1,38 @@
+Domain	Term	r	p
+Arous./ Reg.	Arousal	0.174116402376227	0.217821782178218
+Arous./ Reg.	Circadian Rythm	0.116489868526673	0.356435643564356
+Cognitive Systems	Attention	0.445852270986253	0.0297029702970297
+Cognitive Systems	CC - Goal Selection (Goal)	0.311901876926402	0.0396039603960396
+Cognitive Systems	CC - Goal Selection (Selection)	0.417458744252501	0.0099009900990099
+Cognitive Systems	CC - Performance Monitoring	0.134020966465186	0.386138613861386
+Cognitive Systems	CC - Response Selection	0.0768254203894818	0.534653465346535
+Cognitive Systems	CC - Inhibition/Suppression	0.391214017965636	0.0099009900990099
+Cognitive Systems	Declarative Memory	0.0343275235862959	0.594059405940594
+Cognitive Systems	Declarative Memory/WM	0.119192137439794	0.247524752475248
+Cognitive Systems	Language	0.0262888476570898	0.801980198019802
+Cognitive Systems	Perception - Auditory	0.025539598361285	0.881188118811881
+Cognitive Systems	Perception - Multimodal	0.191473866897996	0.277227722772277
+Cognitive Systems	Perception - Olfactory	0.0570613855115947	0.396039603960396
+Cognitive Systems	Perception - Somatosensory	0.207387992659831	0.148514851485149
+Cognitive Systems	Perception - Visual	0.31494064776127	0.0891089108910891
+Cognitive Systems	WM - Interference Control	0.230417361872316	0.0594059405940594
+Cognitive Systems	WM - Active Maintenance	0.234137519646067	0.0198019801980198
+Cognitive Systems	WM - Flexible Updating	0.206748363831121	0.0594059405940594
+Negative Valence	Acute Threat ('Fear')	0.293568138034209	0.0297029702970297
+Negative Valence	Loss	0.241502605364636	0.0198019801980198
+Negative Valence	Potential Threat ('Anxiety')	0.268338104611031	0.0495049504950495
+Positive Valence Systems	RL - Reward Prediction Error	0.015040406481377	0.940594059405941
+Positive Valence Systems	RL - Probabilistic and Reinforcement Learning	0.00608285640649373	0.95049504950495
+Positive Valence Systems	Reward Anticipation	0.00611629664503386	0.95049504950495
+Positive Valence Systems	Reward Responsivness	0.00393550539865208	0.99009900990099
+Positive Valence Systems	Reward Valuation	0.00576398219016929	0.930693069306931
+Systems for Social Processes	Affiliation and Attachement	0.183208492788626	0.148514851485149
+Systems for Social Processes	Animacy Perception	0.413161919805357	0.0099009900990099
+Systems for Social Processes	Action Perception	0.0668610574291203	0.623762376237624
+Systems for Social Processes	Social Communication	0.010226446831501	0.98019801980198
+Sensorimotor Systems	Agency and Ownership	0.276229106139718	0.0693069306930693
+Sensorimotor Systems	Motor Execution	0.274853026641385	0.128712871287129
+Sensorimotor Systems	Motor Actions	0.358845812286929	0.0792079207920792
+Sensorimotor Systems	Motor Inhibition and Termination	0.289139668492823	0.108910891089109
+Sensorimotor Systems	Motor Initiation	0.27598712238708	0.0792079207920792
+Sensorimotor Systems	Innate Motor Patterns	0.274255389410088	0.138613861386139
