@@ -41,6 +41,21 @@ rdoc_expand_label_abbreviations <- function(x) {
   x
 }
 
+rdoc_expand_domain_labels <- function(x) {
+  x <- as.character(x)
+  domain_map <- c(
+    AR = "Arousal/Reg.",
+    CS = "Cognitive Systems",
+    NV = "Negative Valence",
+    PV = "Positive Valence Systems",
+    SP = "Systems for Social Processes",
+    SS = "Sensorimotor Systems"
+  )
+  idx <- x %in% names(domain_map)
+  x[idx] <- unname(domain_map[x[idx]])
+  x
+}
+
 rdoc_make_two_line_label <- function(x, wrap_width = 28) {
   x <- trimws(gsub("\\s+", " ", as.character(x)))
 
@@ -82,6 +97,8 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #' @param radial_gap_domains Radial gap between middle and outer rings.
 #' @param significance_level Threshold used to draw significance stars (`p < threshold`).
 #' @param show_term_labels Logical; draw term labels outside the domain ribbon.
+#' @param expand_domain_labels Logical; when `TRUE`, domain codes are expanded
+#'   in the outer ring labels (for example `CS` to `Cognitive Systems`).
 #' @param highlight_significant_terms Logical; when `TRUE`, term labels with
 #'   `p < significance_level` are drawn in bold.
 #' @param show_only_significant_term_labels Logical; when `TRUE`, only labels
@@ -114,6 +131,7 @@ plot_rdoc_gg <- function(corr_df,
                          radial_gap_domains = 0.05,
                          significance_level = 0.05,
                          show_term_labels = TRUE,
+                         expand_domain_labels = FALSE,
                          highlight_significant_terms = FALSE,
                          show_only_significant_term_labels = FALSE,
                          show_bar_values = FALSE,
@@ -199,12 +217,18 @@ plot_rdoc_gg <- function(corr_df,
   domain_df$xmax <- domain_df$xmax_raw - angular_gap_domain / 2
   domain_df$y_mid <- (domain_df$ymin + domain_df$ymax) / 2
   domain_df$text_col <- rdoc_contrast_color(domain_cols[domain_df$Domain])
+  domain_df$Domain_label <- if (isTRUE(expand_domain_labels)) {
+    rdoc_expand_domain_labels(domain_df$Domain)
+  } else {
+    as.character(domain_df$Domain)
+  }
 
   domain_paths <- do.call(
     rbind,
     lapply(seq_len(nrow(domain_df)), function(i) {
       data.frame(
         Domain = as.character(domain_df$Domain[i]),
+        Domain_label = as.character(domain_df$Domain_label[i]),
         x = seq(domain_df$xmin[i], domain_df$xmax[i], length.out = 200),
         y = domain_df$y_mid[i],
         text_col = domain_df$text_col[i],
@@ -281,11 +305,11 @@ plot_rdoc_gg <- function(corr_df,
       mapping = ggplot2::aes(
         x = x,
         y = y,
-        label = Domain,
+        label = Domain_label,
         group = Domain,
         colour = text_col
       ),
-      size = 3,
+      size = if (isTRUE(expand_domain_labels)) 2.6 else 3,
       text_smoothing = 30,
       vjust = 0.5,
       upright = TRUE,

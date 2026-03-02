@@ -16,6 +16,7 @@ plot_rdoc_gg(
   radial_gap_domains = 0.05,
   significance_level = 0.05,
   show_term_labels = TRUE,
+  expand_domain_labels = FALSE,
   highlight_significant_terms = FALSE,
   show_only_significant_term_labels = FALSE,
   show_bar_values = FALSE,
@@ -48,6 +49,9 @@ plot_rdoc_gg(
 \item{significance_level}{Threshold used to draw significance stars (\code{p < threshold}).}
 
 \item{show_term_labels}{Logical; draw term labels outside the domain ribbon.}
+
+\item{expand_domain_labels}{Logical; when \code{TRUE}, domain codes are expanded
+in the outer ring labels (for example \code{CS} to \verb{Cognitive Systems}).}
 
 \item{highlight_significant_terms}{Logical; when \code{TRUE}, term labels with
 \code{p < significance_level} are drawn in bold.}
