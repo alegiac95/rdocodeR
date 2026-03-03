@@ -115,6 +115,8 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #' @param term_label_wrap_width Target width for two-line label wrapping.
 #' @param correlation_label Label style used for the correlation legend:
 #'   `"pearson"` (default, `Pearson r`) or `"spearman"` (`Spearman rho`).
+#' @param show_correlation_legend Logical; show correlation color legend.
+#'   When `TRUE` (default), the legend is placed in the lower-right corner.
 #'
 #' @return A ggplot object.
 #' @examples
@@ -143,7 +145,8 @@ rdoc_circleplot <- function(corr_df,
                             term_label_size = 3.2,
                             expand_term_abbreviations = TRUE,
                             term_label_wrap_width = 28,
-                            correlation_label = c("pearson", "spearman")) {
+                            correlation_label = c("pearson", "spearman"),
+                            show_correlation_legend = TRUE) {
   correlation_label <- match.arg(correlation_label)
   corr_df <- rdoc_validate_corr_df(corr_df)
   corr_df <- corr_df[order(corr_df$Domain, corr_df$Term), , drop = FALSE]
@@ -291,6 +294,7 @@ rdoc_circleplot <- function(corr_df,
     bar_value_df$bar_label_angle + 180,
     bar_value_df$bar_label_angle
   )
+  legend_position_value <- if (isTRUE(show_correlation_legend)) c(0.98, 0.03) else "none"
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_rect(
@@ -411,6 +415,8 @@ rdoc_circleplot <- function(corr_df,
     ggplot2::theme_void() +
     rdoc_correlation_legend_theme(title_size = 11, text_size = 11) +
     ggplot2::theme(
+      legend.position = legend_position_value,
+      legend.justification = c(1, 0),
       plot.margin = ggplot2::margin(10, 30, 10, 10)
     )
 

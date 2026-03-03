@@ -26,7 +26,8 @@ rdoc_circleplot(
   term_label_size = 3.2,
   expand_term_abbreviations = TRUE,
   term_label_wrap_width = 28,
-  correlation_label = c("pearson", "spearman")
+  correlation_label = c("pearson", "spearman"),
+  show_correlation_legend = TRUE
 )
 }
 \arguments{
@@ -79,6 +80,9 @@ and \code{WM} to Working Memory.}
 
 \item{correlation_label}{Label style used for the correlation legend:
 \code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}).}
+
+\item{show_correlation_legend}{Logical; show correlation color legend.
+When \code{TRUE} (default), the legend is placed in the lower-right corner.}
 }
 \value{
 A ggplot object.

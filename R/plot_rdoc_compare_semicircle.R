@@ -14,6 +14,8 @@
 #' @param show_significance_stars Logical; draw `*` on significant cells.
 #' @param correlation_label Label style used for the correlation legend:
 #'   `"pearson"` (default, `Pearson r`) or `"spearman"` (`Spearman rho`).
+#' @param show_correlation_legend Logical; show correlation color legend.
+#'   When `TRUE` (default), the legend is placed in the lower-right corner.
 #' @param cut_deg Trim angle (degrees) removed from each end of the semicircle.
 #' @param output_file Optional output path. If provided, plot is saved with
 #'   [ggplot2::ggsave()].
@@ -35,6 +37,7 @@ rdoc_compare_fanplot <- function(corr_list,
                                  significance_level = 0.05,
                                  show_significance_stars = TRUE,
                                  correlation_label = c("pearson", "spearman"),
+                                 show_correlation_legend = TRUE,
                                  cut_deg = 4,
                                  output_file = NULL,
                                  width = 13,
@@ -218,6 +221,7 @@ rdoc_compare_fanplot <- function(corr_list,
     angle = 66
   )
   cond_label_df <- dplyr::select(cond_label_df, -y_max)
+  legend_position_value <- if (isTRUE(show_correlation_legend)) c(0.98, 0.03) else "none"
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_rect(
@@ -301,6 +305,8 @@ rdoc_compare_fanplot <- function(corr_list,
     ggplot2::theme_void() +
     rdoc_correlation_legend_theme(title_size = 11, text_size = 11) +
     ggplot2::theme(
+      legend.position = legend_position_value,
+      legend.justification = c(1, 0),
       plot.margin = ggplot2::margin(6, 16, 6, 6)
     )
 
@@ -329,6 +335,7 @@ plot_rdoc_compare_semicircle <- function(corr_list,
                                          significance_level = 0.05,
                                          show_significance_stars = TRUE,
                                          correlation_label = c("pearson", "spearman"),
+                                         show_correlation_legend = TRUE,
                                          cut_deg = 4,
                                          output_file = NULL,
                                          width = 13,
@@ -341,6 +348,7 @@ plot_rdoc_compare_semicircle <- function(corr_list,
     significance_level = significance_level,
     show_significance_stars = show_significance_stars,
     correlation_label = correlation_label,
+    show_correlation_legend = show_correlation_legend,
     cut_deg = cut_deg,
     output_file = output_file,
     width = width,

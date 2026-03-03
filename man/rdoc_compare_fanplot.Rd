@@ -11,6 +11,7 @@ rdoc_compare_fanplot(
   significance_level = 0.05,
   show_significance_stars = TRUE,
   correlation_label = c("pearson", "spearman"),
+  show_correlation_legend = TRUE,
   cut_deg = 4,
   output_file = NULL,
   width = 13,
@@ -34,6 +35,9 @@ and \code{"strict"} requires identical term sets.}
 
 \item{correlation_label}{Label style used for the correlation legend:
 \code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}).}
+
+\item{show_correlation_legend}{Logical; show correlation color legend.
+When \code{TRUE} (default), the legend is placed in the lower-right corner.}
 
 \item{cut_deg}{Trim angle (degrees) removed from each end of the semicircle.}
 
