@@ -2,6 +2,7 @@
 
 export(plot_rdoc)
 export(plot_rdoc_compare_heatmap)
+export(plot_rdoc_compare_semicircle)
 export(plot_rdoc_construct_legend)
 export(plot_rdoc_gg)
 export(plot_rdoc_heatmap_compare)
