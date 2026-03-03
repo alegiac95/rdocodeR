@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_rdoc_heatmap_compare.R
 \name{plot_rdoc_heatmap_compare}
 \alias{plot_rdoc_heatmap_compare}
-\title{Backward-Compatible Alias for \code{\link[=plot_rdoc_compare_heatmap]{plot_rdoc_compare_heatmap()}}}
+\title{Backward-Compatible Alias for \code{\link[=rdoc_compare_heatplot]{rdoc_compare_heatplot()}}}
 \usage{
 plot_rdoc_heatmap_compare(corr_list, ...)
 }
@@ -10,11 +10,11 @@ plot_rdoc_heatmap_compare(corr_list, ...)
 \item{corr_list}{List of correlation data frames, each with columns \code{Domain},
 \code{Term}, \code{r}, and optional \code{p}.}
 
-\item{...}{Additional arguments passed to \code{\link[=plot_rdoc_compare_heatmap]{plot_rdoc_compare_heatmap()}}.}
+\item{...}{Additional arguments passed to \code{\link[=rdoc_compare_heatplot]{rdoc_compare_heatplot()}}.}
 }
 \value{
 A ggplot object.
 }
 \description{
-Backward-Compatible Alias for \code{\link[=plot_rdoc_compare_heatmap]{plot_rdoc_compare_heatmap()}}
+Backward-Compatible Alias for \code{\link[=rdoc_compare_heatplot]{rdoc_compare_heatplot()}}
 }

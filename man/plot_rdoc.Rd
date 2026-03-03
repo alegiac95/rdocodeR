@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_rdoc_gg.R
 \name{plot_rdoc}
 \alias{plot_rdoc}
-\title{Alias for \code{\link[=plot_rdoc_gg]{plot_rdoc_gg()}}}
+\title{Backward-compatible Alias for \code{\link[=rdoc_circleplot]{rdoc_circleplot()}}}
 \usage{
 plot_rdoc(corr_df, ...)
 }
@@ -10,11 +10,11 @@ plot_rdoc(corr_df, ...)
 \item{corr_df}{Data frame with columns \code{Domain}, \code{Term}, \code{r}, and optional \code{p}.
 \code{Term} must be unique.}
 
-\item{...}{Additional arguments passed to \code{\link[=plot_rdoc_gg]{plot_rdoc_gg()}}.}
+\item{...}{Additional arguments passed to \code{\link[=rdoc_circleplot]{rdoc_circleplot()}}.}
 }
 \value{
 A ggplot object.
 }
 \description{
-Alias for \code{\link[=plot_rdoc_gg]{plot_rdoc_gg()}}
+Backward-compatible Alias for \code{\link[=rdoc_circleplot]{rdoc_circleplot()}}
 }

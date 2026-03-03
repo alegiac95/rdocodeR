@@ -26,20 +26,20 @@
 #' df2 <- df1
 #' set.seed(1)
 #' df2$r <- pmax(pmin(df2$r + stats::rnorm(nrow(df2), sd = 0.1), 1), -1)
-#' p <- plot_rdoc_compare_semicircle(list(Sample_A = df1, Sample_B = df2))
+#' p <- rdoc_compare_fanplot(list(Sample_A = df1, Sample_B = df2))
 #' p
 #' @export
-plot_rdoc_compare_semicircle <- function(corr_list,
-                                         term_alignment = c("union", "strict", "intersection"),
-                                         domain_palette = "Accent",
-                                         significance_level = 0.05,
-                                         show_significance_stars = TRUE,
-                                         correlation_label = c("pearson", "spearman"),
-                                         cut_deg = 4,
-                                         output_file = NULL,
-                                         width = 13,
-                                         height = 8.4,
-                                         dpi = 300) {
+rdoc_compare_fanplot <- function(corr_list,
+                                 term_alignment = c("union", "strict", "intersection"),
+                                 domain_palette = "Accent",
+                                 significance_level = 0.05,
+                                 show_significance_stars = TRUE,
+                                 correlation_label = c("pearson", "spearman"),
+                                 cut_deg = 4,
+                                 output_file = NULL,
+                                 width = 13,
+                                 height = 8.4,
+                                 dpi = 300) {
   term_alignment <- match.arg(term_alignment)
   correlation_label <- match.arg(correlation_label)
   legend_label <- rdoc_correlation_legend_label(correlation_label)
@@ -330,4 +330,35 @@ plot_rdoc_compare_semicircle <- function(corr_list,
   }
 
   p
+}
+
+#' Backward-Compatible Alias for [rdoc_compare_fanplot()]
+#'
+#' @inheritParams rdoc_compare_fanplot
+#' @return A ggplot object.
+#' @export
+plot_rdoc_compare_semicircle <- function(corr_list,
+                                         term_alignment = c("union", "strict", "intersection"),
+                                         domain_palette = "Accent",
+                                         significance_level = 0.05,
+                                         show_significance_stars = TRUE,
+                                         correlation_label = c("pearson", "spearman"),
+                                         cut_deg = 4,
+                                         output_file = NULL,
+                                         width = 13,
+                                         height = 8.4,
+                                         dpi = 300) {
+  rdoc_compare_fanplot(
+    corr_list = corr_list,
+    term_alignment = term_alignment,
+    domain_palette = domain_palette,
+    significance_level = significance_level,
+    show_significance_stars = show_significance_stars,
+    correlation_label = correlation_label,
+    cut_deg = cut_deg,
+    output_file = output_file,
+    width = width,
+    height = height,
+    dpi = dpi
+  )
 }

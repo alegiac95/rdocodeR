@@ -48,7 +48,7 @@ and \code{WM} to Working Memory.}
 A ggplot object.
 }
 \description{
-Builds a standalone legend plot for RDoC terms using the same term colors as \code{\link[=plot_rdoc_gg]{plot_rdoc_gg()}}.
+Builds a standalone legend plot for RDoC terms using the same term colors as \code{\link[=rdoc_circleplot]{rdoc_circleplot()}}.
 }
 \examples{
 df <- rdoc_example_data()

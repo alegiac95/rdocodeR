@@ -198,30 +198,30 @@ rdoc_wrap_multiline <- function(x, width = 22) {
 #' set.seed(1)
 #' df2$r <- pmax(pmin(df2$r + stats::rnorm(nrow(df2), sd = 0.1), 1), -1)
 #' df3$r <- pmax(pmin(df3$r + stats::rnorm(nrow(df3), sd = 0.15), 1), -1)
-#' p <- plot_rdoc_compare_heatmap(list(Sample_A = df1, Sample_B = df2, Sample_C = df3))
+#' p <- rdoc_compare_heatplot(list(Sample_A = df1, Sample_B = df2, Sample_C = df3))
 #' p
 #' @export
-plot_rdoc_compare_heatmap <- function(corr_list,
-                                      term_alignment = c("union", "strict", "intersection"),
-                                      domain_palette = "Accent",
-                                      significance_level = 0.05,
-                                      show_significance_stars = TRUE,
-                                      domain_gap = 0.55,
-                                      annotation_height = 0.48,
-                                      annotation_to_heatmap_gap = 1.2,
-                                      compact_small_domain_labels = FALSE,
-                                      small_domain_threshold = 5,
-                                      domain_label_wrap_width = 22,
-                                      show_term_labels = FALSE,
-                                      show_significant_term_labels = FALSE,
-                                      term_label_wrap_width = 18,
-                                      significant_term_label_angle = 45,
-                                      na_fill = "grey90",
-                                      correlation_label = c("pearson", "spearman"),
-                                      output_file = NULL,
-                                      width = 12,
-                                      height = 5.5,
-                                      dpi = 300) {
+rdoc_compare_heatplot <- function(corr_list,
+                                  term_alignment = c("union", "strict", "intersection"),
+                                  domain_palette = "Accent",
+                                  significance_level = 0.05,
+                                  show_significance_stars = TRUE,
+                                  domain_gap = 0.55,
+                                  annotation_height = 0.48,
+                                  annotation_to_heatmap_gap = 1.2,
+                                  compact_small_domain_labels = FALSE,
+                                  small_domain_threshold = 5,
+                                  domain_label_wrap_width = 22,
+                                  show_term_labels = FALSE,
+                                  show_significant_term_labels = FALSE,
+                                  term_label_wrap_width = 18,
+                                  significant_term_label_angle = 45,
+                                  na_fill = "grey90",
+                                  correlation_label = c("pearson", "spearman"),
+                                  output_file = NULL,
+                                  width = 12,
+                                  height = 5.5,
+                                  dpi = 300) {
   term_alignment <- match.arg(term_alignment)
   correlation_label <- match.arg(correlation_label)
   legend_label <- rdoc_correlation_legend_label(correlation_label)
@@ -467,12 +467,22 @@ plot_rdoc_compare_heatmap <- function(corr_list,
   p
 }
 
-#' Backward-Compatible Alias for [plot_rdoc_compare_heatmap()]
+#' Backward-Compatible Alias for [rdoc_compare_heatplot()]
 #'
-#' @inheritParams plot_rdoc_compare_heatmap
-#' @param ... Additional arguments passed to [plot_rdoc_compare_heatmap()].
+#' @inheritParams rdoc_compare_heatplot
+#' @param ... Additional arguments passed to [rdoc_compare_heatplot()].
+#' @return A ggplot object.
+#' @export
+plot_rdoc_compare_heatmap <- function(corr_list, ...) {
+  rdoc_compare_heatplot(corr_list = corr_list, ...)
+}
+
+#' Backward-Compatible Alias for [rdoc_compare_heatplot()]
+#'
+#' @inheritParams rdoc_compare_heatplot
+#' @param ... Additional arguments passed to [rdoc_compare_heatplot()].
 #' @return A ggplot object.
 #' @export
 plot_rdoc_heatmap_compare <- function(corr_list, ...) {
-  plot_rdoc_compare_heatmap(corr_list = corr_list, ...)
+  rdoc_compare_heatplot(corr_list = corr_list, ...)
 }

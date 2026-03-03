@@ -61,7 +61,7 @@ A ggplot object.
 }
 \description{
 Builds a standalone term-color legend using the same term annotation colors
-as \code{\link[=plot_rdoc_compare_heatmap]{plot_rdoc_compare_heatmap()}}. Labels are drawn below the tiles.
+as \code{\link[=rdoc_compare_heatplot]{rdoc_compare_heatplot()}}. Labels are drawn below the tiles.
 }
 \examples{
 p <- plot_rdoc_heatmap_legend(rdoc_example_data())

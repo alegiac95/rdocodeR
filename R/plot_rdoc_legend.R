@@ -1,6 +1,6 @@
 #' Plot Term Legend for Circular RDoC Plot
 #'
-#' Builds a standalone legend plot for RDoC terms using the same term colors as [plot_rdoc_gg()].
+#' Builds a standalone legend plot for RDoC terms using the same term colors as [rdoc_circleplot()].
 #'
 #' @param corr_df Data frame with columns `Domain` and `Term`.
 #' @param domain_palette Palette name from [rdoc_available_palettes()].

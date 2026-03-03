@@ -1,7 +1,7 @@
 #' Plot Standalone Term Legend for Heatmap Annotations
 #'
 #' Builds a standalone term-color legend using the same term annotation colors
-#' as [plot_rdoc_compare_heatmap()]. Labels are drawn below the tiles.
+#' as [rdoc_compare_heatplot()]. Labels are drawn below the tiles.
 #'
 #' @param corr_df Data frame (or list of data frames) containing at least
 #'   columns `Domain` and `Term`. If a list is provided, the first element is used

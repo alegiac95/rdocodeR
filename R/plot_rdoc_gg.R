@@ -119,31 +119,31 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #' @return A ggplot object.
 #' @examples
 #' df <- rdoc_example_data()
-#' p <- plot_rdoc_gg(df, domain_palette = "Accent")
+#' p <- rdoc_circleplot(df, domain_palette = "Accent")
 #' p
 #' @export
-plot_rdoc_gg <- function(corr_df,
-                         domain_palette = "Accent",
-                         output_file = NULL,
-                         width = 10,
-                         height = 10,
-                         dpi = 300,
-                         angular_gap_term = 0.10,
-                         angular_gap_domain = 0.10,
-                         radial_gap_domains = 0.05,
-                         significance_level = 0.05,
-                         show_term_labels = TRUE,
-                         expand_domain_labels = FALSE,
-                         highlight_significant_terms = FALSE,
-                         show_only_significant_term_labels = FALSE,
-                         show_bar_values = FALSE,
-                         bar_value_digits = 2,
-                         bar_value_size = 2.3,
-                         term_label_offset = 0.16,
-                         term_label_size = 3.2,
-                         expand_term_abbreviations = TRUE,
-                         term_label_wrap_width = 28,
-                         correlation_label = c("pearson", "spearman")) {
+rdoc_circleplot <- function(corr_df,
+                            domain_palette = "Accent",
+                            output_file = NULL,
+                            width = 10,
+                            height = 10,
+                            dpi = 300,
+                            angular_gap_term = 0.10,
+                            angular_gap_domain = 0.10,
+                            radial_gap_domains = 0.05,
+                            significance_level = 0.05,
+                            show_term_labels = TRUE,
+                            expand_domain_labels = FALSE,
+                            highlight_significant_terms = FALSE,
+                            show_only_significant_term_labels = FALSE,
+                            show_bar_values = FALSE,
+                            bar_value_digits = 2,
+                            bar_value_size = 2.3,
+                            term_label_offset = 0.16,
+                            term_label_size = 3.2,
+                            expand_term_abbreviations = TRUE,
+                            term_label_wrap_width = 28,
+                            correlation_label = c("pearson", "spearman")) {
   correlation_label <- match.arg(correlation_label)
   legend_label <- rdoc_correlation_legend_label(correlation_label)
   corr_df <- rdoc_validate_corr_df(corr_df)
@@ -457,12 +457,22 @@ plot_rdoc_gg <- function(corr_df,
   p
 }
 
-#' Alias for [plot_rdoc_gg()]
+#' Backward-compatible Alias for [rdoc_circleplot()]
 #'
-#' @inheritParams plot_rdoc_gg
-#' @param ... Additional arguments passed to [plot_rdoc_gg()].
+#' @inheritParams rdoc_circleplot
+#' @param ... Additional arguments passed to [rdoc_circleplot()].
+#' @return A ggplot object.
+#' @export
+plot_rdoc_gg <- function(corr_df, ...) {
+  rdoc_circleplot(corr_df = corr_df, ...)
+}
+
+#' Backward-compatible Alias for [rdoc_circleplot()]
+#'
+#' @inheritParams rdoc_circleplot
+#' @param ... Additional arguments passed to [rdoc_circleplot()].
 #' @return A ggplot object.
 #' @export
 plot_rdoc <- function(corr_df, ...) {
-  plot_rdoc_gg(corr_df = corr_df, ...)
+  rdoc_circleplot(corr_df = corr_df, ...)
 }
