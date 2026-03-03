@@ -113,6 +113,8 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #'   `RL` to Reinforcement Learning, `CC` to Cognitive Control,
 #'   and `WM` to Working Memory.
 #' @param term_label_wrap_width Target width for two-line label wrapping.
+#' @param correlation_label Label style used for the correlation legend:
+#'   `"pearson"` (default, `Pearson r`) or `"spearman"` (`Spearman rho`).
 #'
 #' @return A ggplot object.
 #' @examples
@@ -140,7 +142,10 @@ plot_rdoc_gg <- function(corr_df,
                          term_label_offset = 0.16,
                          term_label_size = 3.2,
                          expand_term_abbreviations = TRUE,
-                         term_label_wrap_width = 28) {
+                         term_label_wrap_width = 28,
+                         correlation_label = c("pearson", "spearman")) {
+  correlation_label <- match.arg(correlation_label)
+  legend_label <- rdoc_correlation_legend_label(correlation_label)
   corr_df <- rdoc_validate_corr_df(corr_df)
   corr_df <- corr_df[order(corr_df$Domain, corr_df$Term), , drop = FALSE]
   corr_df$id_num <- seq_len(nrow(corr_df))
@@ -347,9 +352,9 @@ plot_rdoc_gg <- function(corr_df,
       high = "red",
       midpoint = 0,
       limits = c(-1, 1),
-      name = expression("Spearman " * rho),
+      name = legend_label,
       guide = ggplot2::guide_colourbar(
-        title = expression("Spearman " * rho),
+        title = legend_label,
         frame.colour = "black",
         frame.linewidth = 0.6,
         ticks.colour = "black",

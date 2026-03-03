@@ -25,7 +25,8 @@ plot_rdoc_gg(
   term_label_offset = 0.16,
   term_label_size = 3.2,
   expand_term_abbreviations = TRUE,
-  term_label_wrap_width = 28
+  term_label_wrap_width = 28,
+  correlation_label = c("pearson", "spearman")
 )
 }
 \arguments{
@@ -75,6 +76,9 @@ significant bars (\code{p < significance_level}) inside the bars.}
 and \code{WM} to Working Memory.}
 
 \item{term_label_wrap_width}{Target width for two-line label wrapping.}
+
+\item{correlation_label}{Label style used for the correlation legend:
+\code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}).}
 }
 \value{
 A ggplot object.
