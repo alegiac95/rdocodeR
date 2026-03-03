@@ -224,7 +224,6 @@ rdoc_compare_heatplot <- function(corr_list,
                                   dpi = 300) {
   term_alignment <- match.arg(term_alignment)
   correlation_label <- match.arg(correlation_label)
-  legend_label <- rdoc_correlation_legend_label(correlation_label)
   validated <- rdoc_validate_compare_list(corr_list, term_alignment = term_alignment)
   corr_data <- validated$data
   cond_names <- validated$condition_names
@@ -370,14 +369,9 @@ rdoc_compare_heatplot <- function(corr_list,
       vjust = 0,
       hjust = 0.5
     ) +
-    ggplot2::scale_fill_gradient2(
-      low = "blue",
-      mid = "white",
-      high = "red",
-      midpoint = 0,
-      limits = c(-1, 1),
-      name = legend_label,
-      na.value = na_fill
+    rdoc_correlation_scale(
+      correlation_label = correlation_label,
+      na_fill = na_fill
     ) +
     ggplot2::scale_y_continuous(
       breaks = as.numeric(condition_y_map[cond_names]),
@@ -391,9 +385,9 @@ rdoc_compare_heatplot <- function(corr_list,
       panel.grid = ggplot2::element_blank(),
       axis.title = ggplot2::element_blank(),
       axis.text.y = ggplot2::element_text(face = "bold", size = 11),
-      legend.title = ggplot2::element_text(face = "bold"),
       plot.margin = ggplot2::margin(24, 16, 14, 16)
-    )
+    ) +
+    rdoc_correlation_legend_theme(title_size = 11, text_size = 11)
 
   if (isTRUE(show_term_labels)) {
     term_labels <- vapply(

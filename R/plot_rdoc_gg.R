@@ -145,7 +145,6 @@ rdoc_circleplot <- function(corr_df,
                             term_label_wrap_width = 28,
                             correlation_label = c("pearson", "spearman")) {
   correlation_label <- match.arg(correlation_label)
-  legend_label <- rdoc_correlation_legend_label(correlation_label)
   corr_df <- rdoc_validate_corr_df(corr_df)
   corr_df <- corr_df[order(corr_df$Domain, corr_df$Term), , drop = FALSE]
   corr_df$id_num <- seq_len(nrow(corr_df))
@@ -346,29 +345,11 @@ rdoc_circleplot <- function(corr_df,
       ),
       colour = "grey50"
     ) +
-    ggplot2::scale_fill_gradient2(
-      low = "blue",
-      mid = "white",
-      high = "red",
-      midpoint = 0,
-      limits = c(-1, 1),
-      name = legend_label,
-      guide = ggplot2::guide_colourbar(
-        title = legend_label,
-        frame.colour = "black",
-        frame.linewidth = 0.6,
-        ticks.colour = "black",
-        title.position = "left",
-        label.position = "right",
-        title.theme = ggplot2::element_text(
-          angle = 90,
-          colour = "black",
-          hjust = 0.5,
-          vjust = 0.5
-        ),
-        label.theme = ggplot2::element_text(colour = "black"),
-        direction = "vertical"
-      )
+    rdoc_correlation_scale(
+      correlation_label = correlation_label,
+      na_fill = "grey90",
+      barheight_pt = 58,
+      barwidth_pt = 16
     ) +
     ggplot2::geom_text(
       data = star_df,
@@ -428,18 +409,8 @@ rdoc_circleplot <- function(corr_df,
     ggplot2::coord_polar(theta = "x", clip = "off") +
     ggplot2::ylim(0, radius_max) +
     ggplot2::theme_void() +
+    rdoc_correlation_legend_theme(title_size = 11, text_size = 11) +
     ggplot2::theme(
-      legend.position = "right",
-      legend.title = ggplot2::element_text(
-        angle = 90,
-        colour = "black",
-        vjust = 0.5,
-        hjust = 0.5
-      ),
-      legend.text = ggplot2::element_text(colour = "black"),
-      legend.background = ggplot2::element_rect(fill = "white", colour = NA),
-      legend.frame = ggplot2::element_rect(fill = NA, colour = "black", linewidth = 0.6),
-      legend.key = ggplot2::element_rect(fill = "white", colour = "black", linewidth = 0.6),
       plot.margin = ggplot2::margin(10, 30, 10, 10)
     )
 

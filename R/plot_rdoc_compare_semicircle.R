@@ -42,7 +42,6 @@ rdoc_compare_fanplot <- function(corr_list,
                                  dpi = 300) {
   term_alignment <- match.arg(term_alignment)
   correlation_label <- match.arg(correlation_label)
-  legend_label <- rdoc_correlation_legend_label(correlation_label)
 
   validated <- rdoc_validate_compare_list(corr_list, term_alignment = term_alignment)
   corr_data <- validated$data
@@ -235,21 +234,11 @@ rdoc_compare_fanplot <- function(corr_list,
       colour = "grey97",
       linewidth = 0.26
     ) +
-    ggplot2::scale_fill_gradient2(
-      low = "#2b83ba",
-      mid = "#f3eee8",
-      high = "#d7301f",
-      midpoint = 0,
-      limits = c(-1, 1),
-      name = legend_label,
-      guide = ggplot2::guide_colorbar(
-        barheight = grid::unit(56, "pt"),
-        barwidth = grid::unit(17, "pt"),
-        title.position = "left",
-        frame.colour = "grey35",
-        frame.linewidth = 0.35,
-        ticks.colour = "grey60"
-      )
+    rdoc_correlation_scale(
+      correlation_label = correlation_label,
+      na_fill = "grey90",
+      barheight_pt = 58,
+      barwidth_pt = 16
     ) +
     ggnewscale::new_scale_fill() +
     ggplot2::geom_rect(
@@ -310,11 +299,8 @@ rdoc_compare_fanplot <- function(corr_list,
     ggplot2::coord_polar(theta = "x", start = -pi / 2, direction = -1, clip = "off") +
     ggplot2::ylim(min(inner_df$ymin) - 0.04, term_ring_outer + 0.26) +
     ggplot2::theme_void() +
+    rdoc_correlation_legend_theme(title_size = 11, text_size = 11) +
     ggplot2::theme(
-      legend.position = "right",
-      legend.title = ggplot2::element_text(face = "bold", size = 11, angle = 90),
-      legend.text = ggplot2::element_text(size = 11),
-      legend.background = ggplot2::element_rect(fill = "white", colour = NA),
       plot.margin = ggplot2::margin(6, 16, 6, 6)
     )
 
