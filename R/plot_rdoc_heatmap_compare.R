@@ -309,7 +309,7 @@ rdoc_compare_heatplot <- function(corr_list,
       ),
       width = 0.95,
       height = annotation_height,
-      colour = "grey45",
+      colour = "grey97",
       linewidth = 0.7,
       show.legend = FALSE
     ) +
@@ -324,7 +324,7 @@ rdoc_compare_heatplot <- function(corr_list,
       ),
       width = 0.95,
       height = annotation_height,
-      colour = "grey45",
+      colour = "grey97",
       linewidth = 0.7,
       show.legend = FALSE
     ) +
