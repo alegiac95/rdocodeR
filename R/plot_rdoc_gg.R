@@ -53,10 +53,32 @@ rdoc_expand_domain_labels <- function(x) {
     "Negative Valence" = "Negative Valence",
     PV = "Positive Valence Systems",
     "Positive Valence Systems" = "Positive Valence Systems",
-    SP = "Systems for\nSocial Processes",
-    "Systems for Social Processes" = "Systems for\nSocial Processes",
+    SP = "Systems for\n Social Processes",
+    "Systems for Social Processes" = "Systems for\n Social Processes",
     SS = "Sensorimotor Systems",
     "Sensorimotor Systems" = "Sensorimotor Systems"
+  )
+  idx <- x %in% names(domain_map)
+  x[idx] <- unname(domain_map[x[idx]])
+  x
+}
+
+rdoc_compact_domain_labels <- function(x) {
+  x <- as.character(x)
+  domain_map <- c(
+    AR = "AR",
+    "Arous./ Reg." = "AR",
+    "Arousal/Regulatory" = "AR",
+    CS = "CS",
+    "Cognitive Systems" = "CS",
+    NV = "NV",
+    "Negative Valence" = "NV",
+    PV = "PV",
+    "Positive Valence Systems" = "PV",
+    SP = "SP",
+    "Systems for Social Processes" = "SP",
+    SS = "SS",
+    "Sensorimotor Systems" = "SS"
   )
   idx <- x %in% names(domain_map)
   x[idx] <- unname(domain_map[x[idx]])
@@ -235,7 +257,7 @@ rdoc_circleplot <- function(corr_df,
   domain_df$Domain_label <- if (isTRUE(expand_domain_labels)) {
     rdoc_expand_domain_labels(domain_df$Domain)
   } else {
-    as.character(domain_df$Domain)
+    rdoc_compact_domain_labels(domain_df$Domain)
   }
 
   domain_paths <- do.call(
