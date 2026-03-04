@@ -1,6 +1,6 @@
 Domain	Term	r	p
 Arous./ Reg.	Arousal	0.174116402376227	0.217821782178218
-Arous./ Reg.	Circadian Rythm	0.116489868526673	0.356435643564356
+Arous./ Reg.	Circadian Rhythm	0.116489868526673	0.356435643564356
 Cognitive Systems	Attention	0.445852270986253	0.0297029702970297
 Cognitive Systems	CC - Goal Selection (Goal)	0.311901876926402	0.0396039603960396
 Cognitive Systems	CC - Goal Selection (Selection)	0.417458744252501	0.0099009900990099
@@ -24,9 +24,9 @@ Negative Valence	Potential Threat ('Anxiety')	0.268338104611031	0.04950495049504
 Positive Valence Systems	RL - Reward Prediction Error	0.015040406481377	0.940594059405941
 Positive Valence Systems	RL - Probabilistic and Reinforcement Learning	0.00608285640649373	0.95049504950495
 Positive Valence Systems	Reward Anticipation	0.00611629664503386	0.95049504950495
-Positive Valence Systems	Reward Responsivness	0.00393550539865208	0.99009900990099
+Positive Valence Systems	Reward Responsiveness	0.00393550539865208	0.99009900990099
 Positive Valence Systems	Reward Valuation	0.00576398219016929	0.930693069306931
-Systems for Social Processes	Affiliation and Attachement	0.183208492788626	0.148514851485149
+Systems for Social Processes	Affiliation and Attachment	0.183208492788626	0.148514851485149
 Systems for Social Processes	Animacy Perception	0.413161919805357	0.0099009900990099
 Systems for Social Processes	Action Perception	0.0668610574291203	0.623762376237624
 Systems for Social Processes	Social Communication	0.010226446831501	0.98019801980198

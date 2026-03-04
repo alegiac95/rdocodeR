@@ -45,11 +45,18 @@ rdoc_expand_domain_labels <- function(x) {
   x <- as.character(x)
   domain_map <- c(
     AR = "Arousal/Reg.",
+    "Arous./ Reg." = "Arousal/Reg.",
+    "Arousal/Regulatory" = "Arousal/Reg.",
     CS = "Cognitive Systems",
+    "Cognitive Systems" = "Cognitive Systems",
     NV = "Negative Valence",
+    "Negative Valence" = "Negative Valence",
     PV = "Positive Valence Systems",
-    SP = "Systems for Social Processes",
-    SS = "Sensorimotor Systems"
+    "Positive Valence Systems" = "Positive Valence Systems",
+    SP = "Systems for\nSocial Processes",
+    "Systems for Social Processes" = "Systems for\nSocial Processes",
+    SS = "Sensorimotor Systems",
+    "Sensorimotor Systems" = "Sensorimotor Systems"
   )
   idx <- x %in% names(domain_map)
   x[idx] <- unname(domain_map[x[idx]])
@@ -98,7 +105,8 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #' @param significance_level Threshold used to draw significance stars (`p < threshold`).
 #' @param show_term_labels Logical; draw term labels outside the domain ribbon.
 #' @param expand_domain_labels Logical; when `TRUE`, domain codes are expanded
-#'   in the outer ring labels (for example `CS` to `Cognitive Systems`).
+#'   in the outer ring labels (for example `CS` to `Cognitive Systems`), and
+#'   long labels can be wrapped (for example `Systems for Social Processes`).
 #' @param highlight_significant_terms Logical; when `TRUE`, term labels with
 #'   `p < significance_level` are drawn in bold.
 #' @param show_only_significant_term_labels Logical; when `TRUE`, only labels
@@ -317,7 +325,7 @@ rdoc_circleplot <- function(corr_df,
         group = Domain,
         colour = text_col
       ),
-      size = if (isTRUE(expand_domain_labels)) 2.6 else 3,
+      size = if (isTRUE(expand_domain_labels)) 2.95 else 3.25,
       text_smoothing = 30,
       vjust = 0.5,
       upright = TRUE,

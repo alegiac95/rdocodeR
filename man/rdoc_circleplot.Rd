@@ -53,7 +53,8 @@ rdoc_circleplot(
 \item{show_term_labels}{Logical; draw term labels outside the domain ribbon.}
 
 \item{expand_domain_labels}{Logical; when \code{TRUE}, domain codes are expanded
-in the outer ring labels (for example \code{CS} to \verb{Cognitive Systems}).}
+in the outer ring labels (for example \code{CS} to \verb{Cognitive Systems}), and
+long labels can be wrapped (for example \verb{Systems for Social Processes}).}
 
 \item{highlight_significant_terms}{Logical; when \code{TRUE}, term labels with
 \code{p < significance_level} are drawn in bold.}

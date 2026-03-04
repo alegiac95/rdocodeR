@@ -10,6 +10,7 @@ plot_rdoc_compare_semicircle(
   domain_palette = "Accent",
   significance_level = 0.05,
   show_significance_stars = TRUE,
+  show_significant_term_labels = FALSE,
   correlation_label = c("pearson", "spearman"),
   show_correlation_legend = TRUE,
   cut_deg = 4,
@@ -32,6 +33,10 @@ and \code{"strict"} requires identical term sets.}
 \item{significance_level}{Threshold used for significance stars (\code{p < threshold}).}
 
 \item{show_significance_stars}{Logical; draw \code{*} on significant cells.}
+
+\item{show_significant_term_labels}{Logical; when \code{TRUE}, show labels for
+terms with at least one significant result (\code{p < significance_level})
+outside the fan, similar to the circular plot.}
 
 \item{correlation_label}{Label style used for the correlation legend:
 \code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}).}

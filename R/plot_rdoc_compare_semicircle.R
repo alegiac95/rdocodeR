@@ -12,6 +12,9 @@
 #' @param domain_palette Palette name from [rdoc_available_palettes()].
 #' @param significance_level Threshold used for significance stars (`p < threshold`).
 #' @param show_significance_stars Logical; draw `*` on significant cells.
+#' @param show_significant_term_labels Logical; when `TRUE`, show labels for
+#'   terms with at least one significant result (`p < significance_level`)
+#'   outside the fan, similar to the circular plot.
 #' @param correlation_label Label style used for the correlation legend:
 #'   `"pearson"` (default, `Pearson r`) or `"spearman"` (`Spearman rho`).
 #' @param show_correlation_legend Logical; show correlation color legend.
@@ -36,6 +39,7 @@ rdoc_compare_fanplot <- function(corr_list,
                                  domain_palette = "Accent",
                                  significance_level = 0.05,
                                  show_significance_stars = TRUE,
+                                 show_significant_term_labels = FALSE,
                                  correlation_label = c("pearson", "spearman"),
                                  show_correlation_legend = TRUE,
                                  cut_deg = 4,
@@ -58,15 +62,15 @@ rdoc_compare_fanplot <- function(corr_list,
 
   # Geometry tuned to the accepted mock style.
   corr_term_gap <- 0.02
-  row_h <- 0.125
+  row_h <- 0.165
   term_ring_gap <- 0.08
-  term_ring_h <- 0.105
+  term_ring_h <- 0.128
   domain_gap <- 0.10
-  heat_inner <- 0.80
+  heat_inner <- 0.90
   n_inner_segments <- 10
-  inner_row_h <- 0.05
-  inner_gap_to_heat <- 0.03
-  heat_to_term_gap <- 0.025
+  inner_row_h <- 0.055
+  inner_gap_to_heat <- 0.02
+  heat_to_term_gap <- 0.018
   inner_tile_gap <- 0.18
   inner_tile_height_scale <- 0.84
 
@@ -85,22 +89,19 @@ rdoc_compare_fanplot <- function(corr_list,
   }
 
   domain_label_map <- c(
-    "Arous./ Reg." = "Arous/Reg",
-    "Arousal/Regulatory" = "Arous/Reg",
-    "Cognitive Systems" = "Cog. Systems",
+    "AR" = "Ar/Reg",
+    "Arous./ Reg." = "Ar/Reg",
+    "Arousal/Regulatory" = "Ar/Reg",
+    "CS" = "Cognitive Systems",
+    "Cognitive Systems" = "Cognitive Systems",
+    "NV" = "Neg. Val.",
     "Negative Valence" = "Neg. Val.",
-    "Positive Valence Systems" = "Pos. Val.",
+    "PV" = "Pos. Valence",
+    "Positive Valence Systems" = "Pos. Valence",
+    "SP" = "Social Proc.",
     "Systems for Social Processes" = "Social Proc.",
+    "SS" = "Sensorimotor",
     "Sensorimotor Systems" = "Sensorimotor"
-  )
-  domain_label_offset_map <- c(
-    "Arous./ Reg." = 0.105,
-    "Arousal/Regulatory" = 0.105,
-    "Cognitive Systems" = 0.105,
-    "Negative Valence" = 0.145,
-    "Positive Valence Systems" = 0.125,
-    "Systems for Social Processes" = 0.095,
-    "Sensorimotor Systems" = 0.105
   )
 
   x_total <- 2 * n_terms
@@ -173,37 +174,33 @@ rdoc_compare_fanplot <- function(corr_list,
     if (label %in% names(domain_label_map)) {
       label <- unname(domain_label_map[[label]])
     }
-    offset <- 0.105
-    if (as.character(dom) %in% names(domain_label_offset_map)) {
-      offset <- unname(domain_label_offset_map[[as.character(dom)]])
-    }
 
     data.frame(
       Domain = dom,
       Domain_label = label,
-      label_offset = offset,
       xmin = map_x(min(ids) - 0.5 + domain_gap / 2),
       xmax = map_x(max(ids) + 0.5 - domain_gap / 2),
       stringsAsFactors = FALSE
     )
   }))
+  domain_ring_inner <- term_ring_outer + 0.02
+  domain_ring_outer <- domain_ring_inner + 0.132
+  domain_ring_df <- domain_df
+  domain_ring_df$ymin <- domain_ring_inner
+  domain_ring_df$ymax <- domain_ring_outer
+  domain_ring_df$text_col <- rdoc_contrast_color(domain_cols[domain_ring_df$Domain])
 
-  domain_line_y <- term_ring_outer + 0.03
-  domain_line_df <- dplyr::bind_rows(lapply(seq_len(nrow(domain_df)), function(i) {
+  domain_text_df <- dplyr::bind_rows(lapply(seq_len(nrow(domain_ring_df)), function(i) {
+    x_seq <- seq(domain_ring_df$xmin[i], domain_ring_df$xmax[i], length.out = 260)
+    if (identical(as.character(domain_ring_df$Domain_label[i]), "Ar/Reg")) {
+      x_seq <- rev(x_seq)
+    }
     data.frame(
-      Domain = domain_df$Domain[i],
-      x = seq(domain_df$xmin[i], domain_df$xmax[i], length.out = 320),
-      y = domain_line_y,
-      stringsAsFactors = FALSE
-    )
-  }))
-
-  domain_text_df <- dplyr::bind_rows(lapply(seq_len(nrow(domain_df)), function(i) {
-    data.frame(
-      Domain = domain_df$Domain[i],
-      Domain_label = domain_df$Domain_label[i],
-      x = seq(domain_df$xmax[i], domain_df$xmin[i], length.out = 260),
-      y = term_ring_outer + domain_df$label_offset[i],
+      Domain = domain_ring_df$Domain[i],
+      Domain_label = domain_ring_df$Domain_label[i],
+      x = x_seq,
+      y = (domain_ring_df$ymin[i] + domain_ring_df$ymax[i]) / 2,
+      text_col = domain_ring_df$text_col[i],
       stringsAsFactors = FALSE
     )
   }))
@@ -221,6 +218,23 @@ rdoc_compare_fanplot <- function(corr_list,
     angle = 66
   )
   cond_label_df <- dplyr::select(cond_label_df, -y_max)
+
+  sig_terms <- unique(heat_df$Term[heat_df$sig])
+  term_label_df <- term_ring_df[term_ring_df$Term %in% sig_terms, , drop = FALSE]
+  if (nrow(term_label_df) > 0) {
+    term_label_df$id_num <- match(term_label_df$Term, term_levels)
+    term_label_df$label <- vapply(
+      rdoc_expand_label_abbreviations(as.character(term_label_df$Term)),
+      rdoc_make_two_line_label,
+      character(1),
+      wrap_width = 28
+    )
+    term_label_df$y <- domain_ring_outer + 0.11
+    term_label_df$angle <- 90 - (180 - 2 * cut_deg) * (term_label_df$id_num - 0.5) / n_terms - cut_deg
+    term_label_df$hjust <- ifelse(term_label_df$angle < -90, 1, 0)
+    term_label_df$angle <- ifelse(term_label_df$angle < -90, term_label_df$angle + 180, term_label_df$angle)
+  }
+  y_upper <- domain_ring_outer + if (isTRUE(show_significant_term_labels) && nrow(term_label_df) > 0) 0.21 else 0.07
   legend_position_value <- if (isTRUE(show_correlation_legend)) c(0.98, 0.03) else "none"
 
   p <- ggplot2::ggplot() +
@@ -235,7 +249,7 @@ rdoc_compare_fanplot <- function(corr_list,
     ggplot2::geom_rect(
       data = heat_df,
       mapping = ggplot2::aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = r),
-      colour = "grey97",
+      colour = "grey45",
       linewidth = 0.26
     ) +
     rdoc_correlation_scale(
@@ -253,27 +267,38 @@ rdoc_compare_fanplot <- function(corr_list,
       show.legend = FALSE
     ) +
     ggplot2::scale_fill_manual(values = term_cols) +
-    ggplot2::geom_path(
-      data = domain_line_df,
-      mapping = ggplot2::aes(x = x, y = y, group = Domain, colour = Domain),
-      linewidth = 1.65,
-      lineend = "butt",
+    ggnewscale::new_scale_fill() +
+    ggplot2::geom_rect(
+      data = domain_ring_df,
+      mapping = ggplot2::aes(
+        xmin = xmin, xmax = xmax,
+        ymin = ymin, ymax = ymax,
+        fill = Domain
+      ),
+      colour = "grey70",
+      linewidth = 0.35,
       show.legend = FALSE
     ) +
-    ggplot2::scale_colour_manual(values = domain_cols) +
+    ggplot2::scale_fill_manual(values = domain_cols) +
     geomtextpath::geom_textpath(
       data = domain_text_df,
-      mapping = ggplot2::aes(x = x, y = y, label = Domain_label, group = Domain),
-      colour = "black",
+      mapping = ggplot2::aes(
+        x = x,
+        y = y,
+        label = Domain_label,
+        group = Domain,
+        colour = text_col
+      ),
       linecolour = NA,
       linewidth = 0,
-      size = 2.55,
+      size = 3.35,
       fontface = "bold",
-      upright = FALSE,
-      text_smoothing = 32,
+      upright = TRUE,
+      text_smoothing = 30,
       vjust = 0.5,
       show.legend = FALSE
     ) +
+    ggplot2::scale_colour_identity() +
     {
       if (isTRUE(show_significance_stars)) {
         ggplot2::geom_text(
@@ -296,18 +321,39 @@ rdoc_compare_fanplot <- function(corr_list,
       fontface = "bold",
       colour = "black"
     ) +
+    {
+      if (isTRUE(show_significant_term_labels) && nrow(term_label_df) > 0) {
+        ggplot2::geom_text(
+          data = term_label_df,
+          mapping = ggplot2::aes(
+            x = (xmin + xmax) / 2,
+            y = y,
+            label = label,
+            angle = angle,
+            hjust = hjust
+          ),
+          size = 2.5,
+          lineheight = 0.9,
+          colour = "black",
+          fontface = "bold",
+          vjust = 0.5
+        )
+      } else {
+        NULL
+      }
+    } +
     ggplot2::scale_x_continuous(
       limits = c(0.5, x_total + 0.5),
       expand = c(0, 0)
     ) +
     ggplot2::coord_polar(theta = "x", start = -pi / 2, direction = -1, clip = "off") +
-    ggplot2::ylim(min(inner_df$ymin) - 0.04, term_ring_outer + 0.26) +
+    ggplot2::ylim(min(inner_df$ymin) - 0.02, y_upper) +
     ggplot2::theme_void() +
     rdoc_correlation_legend_theme(title_size = 11, text_size = 11) +
     ggplot2::theme(
       legend.position = legend_position_value,
       legend.justification = c(1, 0),
-      plot.margin = ggplot2::margin(6, 16, 6, 6)
+      plot.margin = ggplot2::margin(36, 16, 4, 6)
     )
 
   if (!is.null(output_file)) {
@@ -334,6 +380,7 @@ plot_rdoc_compare_semicircle <- function(corr_list,
                                          domain_palette = "Accent",
                                          significance_level = 0.05,
                                          show_significance_stars = TRUE,
+                                         show_significant_term_labels = FALSE,
                                          correlation_label = c("pearson", "spearman"),
                                          show_correlation_legend = TRUE,
                                          cut_deg = 4,
@@ -347,6 +394,7 @@ plot_rdoc_compare_semicircle <- function(corr_list,
     domain_palette = domain_palette,
     significance_level = significance_level,
     show_significance_stars = show_significance_stars,
+    show_significant_term_labels = show_significant_term_labels,
     correlation_label = correlation_label,
     show_correlation_legend = show_correlation_legend,
     cut_deg = cut_deg,

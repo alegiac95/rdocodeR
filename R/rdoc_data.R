@@ -13,7 +13,7 @@ rdoc_terms_reference <- function() {
       "SP", "SP", "SP", "SP", "SS", "SS", "SS", "SS", "SS", "SS"
     ),
     Term = c(
-      "Arousal", "Circadian Rythm", "Attention",
+      "Arousal", "Circadian Rhythm", "Attention",
       "CC - Goal Selection (Goal)", "CC - Goal Selection (Selection)",
       "CC - Performance Monitoring", "CC - Response Selection",
       "CC - Inhibition/Suppression", "Declarative Memory",
@@ -22,8 +22,8 @@ rdoc_terms_reference <- function() {
       "Perception - Visual", "WM - Interference Control", "WM - Active Maintenance",
       "WM - Flexible Updating", "Acute Threat ('Fear')", "Loss", "Potential Threat ('Anxiety')",
       "RL - Reward Prediction Error", "RL - Probabilistic and Reinforcement Learning",
-      "Reward Anticipation", "Reward Responsivness", "Reward Valuation",
-      "Affiliation and Attachement", "Animacy Perception", "Action Perception",
+      "Reward Anticipation", "Reward Responsiveness", "Reward Valuation",
+      "Affiliation and Attachment", "Animacy Perception", "Action Perception",
       "Social Communication", "Agency and Ownership", "Motor Execution",
       "Motor Actions", "Motor Inhibition and Termination", "Motor Initiation",
       "Innate Motor Patterns"
