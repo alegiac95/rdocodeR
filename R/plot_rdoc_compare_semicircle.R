@@ -286,28 +286,59 @@ rdoc_compare_fanplot <- function(corr_list,
   sig_terms <- unique(heat_df$Term[heat_df$sig])
   term_label_df <- term_ring_df[term_ring_df$Term %in% sig_terms, , drop = FALSE]
   term_label_paths <- NULL
+  term_label_paths_fwd <- NULL
+  term_label_paths_rev <- NULL
   if (nrow(term_label_df) > 0) {
     term_label_df$x_mid <- (term_label_df$xmin + term_label_df$xmax) / 2
-    term_label_df$label <- rdoc_expand_label_abbreviations(as.character(term_label_df$Term))
+    # Keep fan labels compact/readable and wrap long labels onto two lines.
+    compact_label <- function(lbl) {
+      lbl <- trimws(gsub("\\s+", " ", as.character(lbl)))
+      lbl <- gsub("^Cognitive Control\\s*-\\s*", "CC - ", lbl, perl = TRUE)
+      lbl <- gsub("^Working Memory\\s*-\\s*", "WM - ", lbl, perl = TRUE)
+      lbl <- gsub("^Reinforcement Learning\\s*-\\s*", "RL - ", lbl, perl = TRUE)
+      lbl <- gsub("^Perception\\s*-\\s*", "Perc. - ", lbl, perl = TRUE)
+      lbl <- gsub("Declarative Memory/Working Memory", "Declarative Memory/WM", lbl, fixed = TRUE)
+      lbl <- gsub("Probabilistic and Reinforcement Learning", "Prob. & RL", lbl, fixed = TRUE)
+      lbl <- gsub("Prediction Error", "Pred. Error", lbl, fixed = TRUE)
+      lbl <- gsub("Interference Control", "Interf. Control", lbl, fixed = TRUE)
+      lbl
+    }
+    term_label_df$label <- vapply(as.character(term_label_df$Term), compact_label, character(1))
+    term_label_df$label <- vapply(term_label_df$label, rdoc_make_two_line_label, character(1), wrap_width = 22)
 
-    ord <- order(term_label_df$x_mid)
-    n_stagger <- if (nrow(term_label_df) > 10) 3L else 2L
-    offset_level <- integer(nrow(term_label_df))
-    offset_level[ord] <- (seq_along(ord) - 1L) %% n_stagger
-    # Keep significant-term labels just outside the domain band while
-    # preserving the same radial orientation.
-    term_label_df$y_start <- domain_ring_outer + 0.075 + 0.06 * offset_level
-    term_label_df$y_end <- term_label_df$y_start + 0.20
+    # Keep orientation consistent within each domain to avoid mixed flips.
+    domain_center_x <- stats::setNames(
+      (domain_ring_df$xmin + domain_ring_df$xmax) / 2,
+      as.character(domain_ring_df$Domain)
+    )
+    domain_theta <- -pi / 2 - 2 * pi * ((domain_center_x - 0.5) / x_total)
+    # Left-side domains are flipped as a whole for readability.
+    domain_reverse <- stats::setNames(cos(domain_theta) < 0, names(domain_theta))
+    term_label_df$reverse <- unname(domain_reverse[as.character(term_label_df$Domain)])
+    term_label_df$reverse[is.na(term_label_df$reverse)] <- FALSE
+
+    # Keep the closest character of every label at a constant distance
+    # from the domain ring for a cleaner outer-label baseline.
+    term_label_df$y_start <- domain_ring_outer + 0.075
+    term_label_df$y_end <- term_label_df$y_start + 0.34
 
     term_label_paths <- dplyr::bind_rows(lapply(seq_len(nrow(term_label_df)), function(i) {
+      y_pair <- if (isTRUE(term_label_df$reverse[i])) {
+        c(term_label_df$y_end[i], term_label_df$y_start[i])
+      } else {
+        c(term_label_df$y_start[i], term_label_df$y_end[i])
+      }
       data.frame(
         grp = i,
         label = term_label_df$label[i],
         x = c(term_label_df$x_mid[i], term_label_df$x_mid[i]),
-        y = c(term_label_df$y_start[i], term_label_df$y_end[i]),
+        y = y_pair,
+        reverse = isTRUE(term_label_df$reverse[i]),
         stringsAsFactors = FALSE
       )
     }))
+    term_label_paths_fwd <- term_label_paths[!term_label_paths$reverse, , drop = FALSE]
+    term_label_paths_rev <- term_label_paths[term_label_paths$reverse, , drop = FALSE]
   }
   y_upper <- if (isTRUE(show_significant_term_labels) && nrow(term_label_df) > 0) {
     max(term_label_df$y_end) + 0.06
@@ -403,24 +434,51 @@ rdoc_compare_fanplot <- function(corr_list,
     ) +
     {
       if (isTRUE(show_significant_term_labels) && nrow(term_label_df) > 0) {
-        geomtextpath::geom_textpath(
-          data = term_label_paths,
-          mapping = ggplot2::aes(
-            x = x,
-            y = y,
-            label = label,
-            group = grp
-          ),
-          linecolour = NA,
-          linewidth = 0,
-          size = 2.3,
-          lineheight = 0.9,
-          colour = "black",
-          fontface = "bold",
-          upright = TRUE,
-          text_smoothing = 0,
-          vjust = 0.5,
-          show.legend = FALSE
+        list(
+          if (nrow(term_label_paths_fwd) > 0) {
+            geomtextpath::geom_textpath(
+              data = term_label_paths_fwd,
+              mapping = ggplot2::aes(
+                x = x,
+                y = y,
+                label = label,
+                group = grp
+              ),
+              linecolour = NA,
+              linewidth = 0,
+              size = 2.3,
+              lineheight = 0.9,
+              colour = "black",
+              fontface = "plain",
+              hjust = 0,
+              upright = FALSE,
+              text_smoothing = 0,
+              vjust = 0.5,
+              show.legend = FALSE
+            )
+          },
+          if (nrow(term_label_paths_rev) > 0) {
+            geomtextpath::geom_textpath(
+              data = term_label_paths_rev,
+              mapping = ggplot2::aes(
+                x = x,
+                y = y,
+                label = label,
+                group = grp
+              ),
+              linecolour = NA,
+              linewidth = 0,
+              size = 2.3,
+              lineheight = 0.9,
+              colour = "black",
+              fontface = "plain",
+              hjust = 1,
+              upright = FALSE,
+              text_smoothing = 0,
+              vjust = 0.5,
+              show.legend = FALSE
+            )
+          }
         )
       } else {
         NULL
