@@ -36,7 +36,7 @@ and \code{"strict"} requires identical term sets.}
 
 \item{show_significant_term_labels}{Logical; when \code{TRUE}, show labels for
 terms with at least one significant result (\code{p < significance_level})
-outside the fan, similar to the circular plot.}
+outside the fan as radial labels, similar to the circular plot.}
 
 \item{correlation_label}{Label style used for the correlation legend:
 \code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}).}
@@ -60,6 +60,8 @@ A ggplot object.
 Builds a multi-condition semi-circular comparison plot with:
 correlation tiles (one ring per condition), a term annotation ring,
 domain outline arcs, and inner decorative grey segmented rings.
+The term annotation ring automatically shrinks for large comparisons
+(more than 6 conditions) to keep domain labels readable.
 }
 \examples{
 df1 <- rdoc_example_data()

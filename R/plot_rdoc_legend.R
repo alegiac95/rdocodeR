@@ -138,13 +138,3 @@ plot_rdoc_legend <- function(corr_df,
 
   p
 }
-
-#' Backward-compatible Alias for [plot_rdoc_legend()]
-#'
-#' @inheritParams plot_rdoc_legend
-#' @param ... Additional arguments passed to [plot_rdoc_legend()].
-#' @return A ggplot object.
-#' @export
-plot_rdoc_construct_legend <- function(corr_df, ...) {
-  plot_rdoc_legend(corr_df = corr_df, ...)
-}

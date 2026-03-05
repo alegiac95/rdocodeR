@@ -460,23 +460,3 @@ rdoc_compare_heatplot <- function(corr_list,
 
   p
 }
-
-#' Backward-Compatible Alias for [rdoc_compare_heatplot()]
-#'
-#' @inheritParams rdoc_compare_heatplot
-#' @param ... Additional arguments passed to [rdoc_compare_heatplot()].
-#' @return A ggplot object.
-#' @export
-plot_rdoc_compare_heatmap <- function(corr_list, ...) {
-  rdoc_compare_heatplot(corr_list = corr_list, ...)
-}
-
-#' Backward-Compatible Alias for [rdoc_compare_heatplot()]
-#'
-#' @inheritParams rdoc_compare_heatplot
-#' @param ... Additional arguments passed to [rdoc_compare_heatplot()].
-#' @return A ggplot object.
-#' @export
-plot_rdoc_heatmap_compare <- function(corr_list, ...) {
-  rdoc_compare_heatplot(corr_list = corr_list, ...)
-}

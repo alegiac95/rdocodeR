@@ -463,23 +463,3 @@ rdoc_circleplot <- function(corr_df,
 
   p
 }
-
-#' Backward-compatible Alias for [rdoc_circleplot()]
-#'
-#' @inheritParams rdoc_circleplot
-#' @param ... Additional arguments passed to [rdoc_circleplot()].
-#' @return A ggplot object.
-#' @export
-plot_rdoc_gg <- function(corr_df, ...) {
-  rdoc_circleplot(corr_df = corr_df, ...)
-}
-
-#' Backward-compatible Alias for [rdoc_circleplot()]
-#'
-#' @inheritParams rdoc_circleplot
-#' @param ... Additional arguments passed to [rdoc_circleplot()].
-#' @return A ggplot object.
-#' @export
-plot_rdoc <- function(corr_df, ...) {
-  rdoc_circleplot(corr_df = corr_df, ...)
-}
