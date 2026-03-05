@@ -306,15 +306,10 @@ rdoc_compare_fanplot <- function(corr_list,
     term_label_df$label <- vapply(as.character(term_label_df$Term), compact_label, character(1))
     term_label_df$label <- vapply(term_label_df$label, rdoc_make_two_line_label, character(1), wrap_width = 22)
 
-    # Keep orientation consistent within each domain to avoid mixed flips.
-    domain_center_x <- stats::setNames(
-      (domain_ring_df$xmin + domain_ring_df$xmax) / 2,
-      as.character(domain_ring_df$Domain)
-    )
-    domain_theta <- -pi / 2 - 2 * pi * ((domain_center_x - 0.5) / x_total)
-    # Left-side domains are flipped as a whole for readability.
-    domain_reverse <- stats::setNames(cos(domain_theta) < 0, names(domain_theta))
-    term_label_df$reverse <- unname(domain_reverse[as.character(term_label_df$Domain)])
+    # Use a fixed domain-wise orientation split:
+    # AR/CS use one direction, all other domains the opposite.
+    term_label_df$domain_code <- domain_to_code(as.character(term_label_df$Domain))
+    term_label_df$reverse <- term_label_df$domain_code %in% c("AR", "CS")
     term_label_df$reverse[is.na(term_label_df$reverse)] <- FALSE
 
     # Keep the closest character of every label at a constant distance
