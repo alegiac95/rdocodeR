@@ -4,28 +4,43 @@
   <img src="man/figures/logo.png" height="260" alt="rdocodeR hex logo" />
 </p>
 
-`rdocodeR` is an R package for decoding brain overlays into the NIMH RDoC framework and visualizing term-level/domain-level results.
+`rdocodeR` is an R package for decoding cortical overlays into the NIMH RDoC framework and visualizing term-level and domain-level results.
 
-## What Is RDoC?
+## 🧠 What Is RDoC?
 
-The Research Domain Criteria (RDoC) framework organizes brain-behavior findings by functional domains (for example Cognitive Systems, Valence Systems, and Arousal/Regulatory), rather than only by diagnosis.
+![RDoC Framework](https://pro.boehringer-ingelheim.com/connecting-psychiatry/news-perspectives/rdoc-framework-explainer)
 
-## Installation
+Image source: [Boehringer Ingelheim - RDoC Framework Explainer](https://pro.boehringer-ingelheim.com/connecting-psychiatry/news-perspectives/rdoc-framework-explainer)
+
+**Research Domain Criteria (RDoC)** is a research framework developed by the **U.S. National Institute of Mental Health (NIMH)** to study psychopathology in terms of **basic functional dimensions** (for example threat processing, reward learning, cognitive control) that vary along **normal-to-abnormal continua**, rather than starting from symptom-defined categories (DSM/ICD).
+
+RDoC is operationalized through the **RDoC Matrix**, which organizes constructs into major domains and encourages integration across multiple **units of analysis** (genes, molecules, cells, circuits, physiology, behavior, self-report, and task performance) to test mechanistic hypotheses.
+
+NIMH defines six major domains in the matrix. Domain definitions source: [NIMH Definitions of the RDoC domains and constructs](https://www.nimh.nih.gov/research/research-funded-by-nimh/rdoc/definitions-of-the-rdoc-domains-and-constructs).
+
+- ⚠️ **Negative Valence Systems**: systems supporting responses to aversive situations (for example acute threat/fear, potential threat/anxiety, sustained threat, loss, frustrative nonreward).
+- 🌟 **Positive Valence Systems**: systems supporting responses to positive motivational situations (for example reward responsiveness, reward learning, habit).
+- 🧠 **Cognitive Systems**: systems for core cognitive operations (for example attention, perception, declarative memory, language, cognitive control, and working memory).
+- 👥 **Systems for Social Processes**: systems supporting social functioning (for example affiliation/attachment, social communication, and perception/understanding of self and others).
+- 🌙 **Arousal and Regulatory Systems**: systems involved in global regulation (for example arousal, sleep-wake functioning, circadian rhythms, homeostatic regulation).
+- 🦾 **Sensorimotor Systems**: systems supporting motor and action-related functions (for example action planning/selection, motor execution, agency/ownership).
+
+Key sources: [Insel et al., 2010](https://pubmed.ncbi.nlm.nih.gov/20595427/) · [NIMH: About RDoC](https://www.nimh.nih.gov/research/research-funded-by-nimh/rdoc/about-rdoc) · [NIMH: RDoC Matrix](https://www.nimh.nih.gov/research/research-funded-by-nimh/rdoc/constructs/rdoc-matrix) · [Boehringer Ingelheim: RDoC Framework Explainer](https://pro.boehringer-ingelheim.com/connecting-psychiatry/news-perspectives/rdoc-framework-explainer)
+
+## 🚀 Installation
 
 ```r
 install.packages("devtools")
 devtools::install_github("alegiac95/rdocodeR")
 ```
 
-## Quick Workflow
+## ⚡ Quick Workflow
 
 1. Decode your overlay with `rdoc_decode()`.
 2. Plot one result with `rdoc_circleplot()`.
 3. Compare multiple results with `rdoc_compare_heatplot()` or `rdoc_compare_fanplot()`.
 
----
-
-## 1) Decode an Overlay
+### 1) Decode an Overlay
 
 ```r
 library(rdocodeR)
@@ -44,13 +59,9 @@ rdoc_decode(
 )
 ```
 
----
-
-## 2) Plot a Single RDoC Decoding Table
+### 2) Plot a Single RDoC Decoding Table
 
 ```r
-library(rdocodeR)
-
 df <- rdoc_example_data()
 
 p_circle <- rdoc_circleplot(
@@ -65,15 +76,9 @@ p_circle
 
 ![rdoc circleplot example](man/figures/readme-circleplot.png)
 
----
-
-## 3) Compare Multiple Decoding Tables (n >= 2)
-
-### Heat-style comparison
+### 3) Compare Multiple Decoding Tables (n >= 2)
 
 ```r
-library(rdocodeR)
-
 df1 <- rdoc_example_data()
 df2 <- df1
 df3 <- df1
@@ -89,14 +94,6 @@ p_heat <- rdoc_compare_heatplot(
   correlation_label = "pearson"
 )
 p_heat
-```
-
-![rdoc heatplot example](man/figures/readme-heatplot.png)
-
-### Fan-style comparison
-
-```r
-library(rdocodeR)
 
 p_fan <- rdoc_compare_fanplot(
   corr_list = list(Sample_A = df1, Sample_B = df2, Sample_C = df3),
@@ -107,33 +104,34 @@ p_fan <- rdoc_compare_fanplot(
 p_fan
 ```
 
+![rdoc heatplot example](man/figures/readme-heatplot.png)
+
 ![rdoc fanplot example](man/figures/readme-fanplot.png)
 
-The README plots above are generated from synthetic (fake) custom correlations built on the package term structure.
+### Standalone Helpers
 
-```r
-terms <- rdoc_terms_reference()
+- `rdoc_available_palettes()`
+- `plot_rdoc_legend()`
+- `plot_rdoc_heatmap_legend()`
+- `rdoc_terms_reference()` and `rdoc_terms_file()`
 
-make_fake <- function(seed, phase = 0) {
-  set.seed(seed)
-  x <- seq_len(nrow(terms))
-  r <- 0.45 * sin(x / 4 + phase) + 0.25 * cos(x / 7 - phase) + rnorm(length(x), 0, 0.12)
-  r <- pmax(-1, pmin(1, r))
-  p <- pmin(1, exp(-4.0 * abs(r)) + runif(length(x), 0, 0.06))
-  p <- pmax(p, 1e-4)
-  data.frame(Domain = terms$Domain, Term = terms$Term, r = r, p = p)
-}
+## 🔗 References
 
-df1 <- make_fake(1001, 0.0)
-df2 <- make_fake(1002, 0.4)
-df3 <- make_fake(1003, -0.3)
-```
+### Core framework and NIMH documentation
 
----
+- Insel, T. R., Cuthbert, B. N., Garvey, M. A., Heinssen, R. K., Pine, D. S., Quinn, K. J., Sanislow, C. A., & Wang, P. S. (2010). *Research domain criteria (RDoC): Toward a new classification framework for research on mental disorders.* *American Journal of Psychiatry, 167*(7), 748-751. https://doi.org/10.1176/appi.ajp.2010.09091379 (PubMed: https://pubmed.ncbi.nlm.nih.gov/20595427/)
+- National Institute of Mental Health. (n.d.). About RDoC. https://www.nimh.nih.gov/research/research-funded-by-nimh/rdoc/about-rdoc
+- National Institute of Mental Health. (n.d.). RDoC Matrix. https://www.nimh.nih.gov/research/research-funded-by-nimh/rdoc/constructs/rdoc-matrix
+- National Institute of Mental Health. (n.d.). Definitions of the RDoC domains and constructs. https://www.nimh.nih.gov/research/research-funded-by-nimh/rdoc/definitions-of-the-rdoc-domains-and-constructs
+- Boehringer Ingelheim. (n.d.). RDoC framework explainer. https://pro.boehringer-ingelheim.com/connecting-psychiatry/news-perspectives/rdoc-framework-explainer
 
-## Standalone Helpers
+### Further reading
 
-- `rdoc_available_palettes()` to inspect palette options
-- `plot_rdoc_legend()` for circular-term legends
-- `plot_rdoc_heatmap_legend()` for heatplot term annotation legend
-- `rdoc_terms_reference()` and `rdoc_terms_file()` for internal term resources
+- Cuthbert, B. N. (2014). *The RDoC framework: Facilitating transition from ICD/DSM to dimensional approaches that integrate neuroscience and psychopathology.* *World Psychiatry, 13*(1), 28-35. https://doi.org/10.1002/wps.20087 (PubMed: https://pubmed.ncbi.nlm.nih.gov/24497240/)
+- Kozak, M. J., & Cuthbert, B. N. (2016). *The NIMH Research Domain Criteria Initiative: Background, Issues, and Pragmatics.* *Psychophysiology, 53*(3), 286-297. https://doi.org/10.1111/psyp.12518 (PubMed: https://pubmed.ncbi.nlm.nih.gov/26877115/)
+- Casey, B. J., Oliveri, M. E., & Insel, T. (2014). *A neurodevelopmental perspective on the research domain criteria (RDoC) framework.* *Biological Psychiatry, 76*(5), 350-353. https://doi.org/10.1016/j.biopsych.2014.01.006 (PubMed: https://pubmed.ncbi.nlm.nih.gov/25103538/)
+- Hyman, S. E. (2010). *The diagnosis of mental disorders: The problem of reification.* *Annual Review of Clinical Psychology, 6*, 155-179. https://doi.org/10.1146/annurev.clinpsy.3.022806.091532 (PubMed: https://pubmed.ncbi.nlm.nih.gov/17716032/)
+
+### 📦 BibTeX
+
+BibTeX entries are provided in: [`inst/references/rdoc_references.bib`](inst/references/rdoc_references.bib)
