@@ -8,7 +8,7 @@
 
 ## 🧠 What Is RDoC?
 
-![RDoC Framework](https://pro.boehringer-ingelheim.com/connecting-psychiatry/news-perspectives/rdoc-framework-explainer)
+![RDoC Framework](man/figures/rdoc-framework-explainer.png)
 
 Image source: [Boehringer Ingelheim - RDoC Framework Explainer](https://pro.boehringer-ingelheim.com/connecting-psychiatry/news-perspectives/rdoc-framework-explainer)
 
