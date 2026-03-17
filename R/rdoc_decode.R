@@ -1,3 +1,56 @@
+rdoc_spatial_cor_with_nulls_pairwise <- function(x,
+                                                 y,
+                                                 x_nulls,
+                                                 method = "pearson",
+                                                 use = "pairwise.complete.obs") {
+  n_nulls <- nrow(x_nulls)
+  r_obs <- stats::cor(x, y, use = use, method = method)
+  r_null <- apply(
+    x_nulls,
+    1L,
+    function(x_null) stats::cor(x_null, y, use = use, method = method)
+  )
+
+  if (!is.finite(r_obs)) {
+    p_perm <- NA_real_
+  } else {
+    p_perm <- (sum(abs(r_null) >= abs(r_obs), na.rm = TRUE) + 1) / (1 + n_nulls)
+  }
+
+  data.frame(r.obs = r_obs, p.perm = p_perm, stringsAsFactors = FALSE)
+}
+
+
+rdoc_spatial_cor_spins_pairwise <- function(fs_x,
+                                            fs_y,
+                                            n_spins = 100L,
+                                            method = "pearson",
+                                            use = "pairwise.complete.obs") {
+  fs_x_spins <- fsnull::fs_create_spins_bloch(
+    fs_x,
+    atlas = "fsaverage",
+    density = "41k",
+    n.spins = n_spins
+  )
+
+  if (!is.matrix(fs_x_spins)) {
+    fs_x_spins <- as.matrix(fs_x_spins)
+  }
+  if (nrow(fs_x_spins) != as.integer(n_spins) &&
+      ncol(fs_x_spins) == as.integer(n_spins)) {
+    fs_x_spins <- t(fs_x_spins)
+  }
+
+  rdoc_spatial_cor_with_nulls_pairwise(
+    x = fs_x,
+    y = fs_y,
+    x_nulls = fs_x_spins,
+    method = method,
+    use = use
+  )
+}
+
+
 #' Decode a Brain Overlay Against RDoC Term Maps
 #'
 #' Computes spatial correlations between a FreeSurfer overlay and internal RDoC term maps,
@@ -33,6 +86,12 @@ rdoc_decode <- function(fs_overlay,
 
   if (!requireNamespace("fsdecode", quietly = TRUE)) {
     stop("Package `fsdecode` is required for `rdoc_decode()`.", call. = FALSE)
+  }
+  if (perm_method == "spins" && !requireNamespace("fsnull", quietly = TRUE)) {
+    stop(
+      "Package `fsnull` is required when `perm_method` is `\"spins\"`.",
+      call. = FALSE
+    )
   }
 
   terms_path <- rdoc_terms_file()
@@ -93,7 +152,12 @@ rdoc_decode <- function(fs_overlay,
       )
     },
     spins = function(i) {
-      fsdecode::fs_spatial_cor_spins(fs_overlay, terms[[i]], method = cor_method)
+      rdoc_spatial_cor_spins_pairwise(
+        fs_x = fs_overlay,
+        fs_y = terms[[i]],
+        method = cor_method,
+        use = "pairwise.complete.obs"
+      )
     },
     nulls = function(i) {
       fsdecode::fs_spatial_cor_with_nulls(
