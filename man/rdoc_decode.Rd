@@ -8,7 +8,7 @@ rdoc_decode(
   fs_overlay,
   save_results = FALSE,
   results_file = NULL,
-  perm_method = c("eigen", "spins", "nulls"),
+  perm_method = c("eigen", "nulls"),
   fs_surrogate = NULL,
   cor_method = c("pearson", "spearman"),
   absolute_r = FALSE,
@@ -16,14 +16,14 @@ rdoc_decode(
 )
 }
 \arguments{
-\item{fs_overlay}{FreeSurfer overlay object accepted by \code{fsdecode}.}
+\item{fs_overlay}{Numeric cortical overlay vector matching the bundled RDoC term maps.}
 
 \item{save_results}{Logical; write a TSV with correlations.}
 
 \item{results_file}{Optional output path for the TSV file when \code{save_results = TRUE}.
 If \code{NULL}, defaults to \code{rdoc_decode_results.tsv} in the current working directory.}
 
-\item{perm_method}{Correlation permutation method (\code{"eigen"}, \code{"spins"}, or \code{"nulls"}).
+\item{perm_method}{Correlation permutation method (\code{"eigen"} or \code{"nulls"}).
 Default is \code{"eigen"}.}
 
 \item{fs_surrogate}{Optional precomputed surrogate matrix for
@@ -31,7 +31,7 @@ Default is \code{"eigen"}.}
 pass the raw list returned by \code{fsnull::fs_create_eigenstraps()}
 (with \code{lh} and \code{rh}), which will be combined automatically.}
 
-\item{cor_method}{Correlation method passed to \code{fsdecode} (\code{"pearson"} or \code{"spearman"}).
+\item{cor_method}{Correlation method (\code{"pearson"} or \code{"spearman"}).
 Default is \code{"pearson"}.}
 
 \item{absolute_r}{Logical; if \code{TRUE}, stores absolute values of \code{r}.}

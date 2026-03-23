@@ -19,7 +19,6 @@ Imports:
     RColorBrewer,
     viridisLite
 Suggests:
-    fsdecode,
     fsnull
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

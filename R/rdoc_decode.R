@@ -3,6 +3,10 @@ rdoc_spatial_cor_with_nulls_pairwise <- function(x,
                                                  x_nulls,
                                                  method = "pearson",
                                                  use = "pairwise.complete.obs") {
+  if (!is.matrix(x_nulls)) {
+    x_nulls <- as.matrix(x_nulls)
+  }
+
   n_nulls <- nrow(x_nulls)
   r_obs <- stats::cor(x, y, use = use, method = method)
   r_null <- apply(
@@ -21,52 +25,22 @@ rdoc_spatial_cor_with_nulls_pairwise <- function(x,
 }
 
 
-rdoc_spatial_cor_spins_pairwise <- function(fs_x,
-                                            fs_y,
-                                            n_spins = 100L,
-                                            method = "pearson",
-                                            use = "pairwise.complete.obs") {
-  fs_x_spins <- fsnull::fs_create_spins_bloch(
-    fs_x,
-    atlas = "fsaverage",
-    density = "41k",
-    n.spins = n_spins
-  )
-
-  if (!is.matrix(fs_x_spins)) {
-    fs_x_spins <- as.matrix(fs_x_spins)
-  }
-  if (nrow(fs_x_spins) != as.integer(n_spins) &&
-      ncol(fs_x_spins) == as.integer(n_spins)) {
-    fs_x_spins <- t(fs_x_spins)
-  }
-
-  rdoc_spatial_cor_with_nulls_pairwise(
-    x = fs_x,
-    y = fs_y,
-    x_nulls = fs_x_spins,
-    method = method,
-    use = use
-  )
-}
-
-
 #' Decode a Brain Overlay Against RDoC Term Maps
 #'
 #' Computes spatial correlations between a FreeSurfer overlay and internal RDoC term maps,
 #' and optionally writes a TSV file with the results.
 #'
-#' @param fs_overlay FreeSurfer overlay object accepted by `fsdecode`.
+#' @param fs_overlay Numeric cortical overlay vector matching the bundled RDoC term maps.
 #' @param save_results Logical; write a TSV with correlations.
 #' @param results_file Optional output path for the TSV file when `save_results = TRUE`.
 #'   If `NULL`, defaults to `rdoc_decode_results.tsv` in the current working directory.
-#' @param perm_method Correlation permutation method (`"eigen"`, `"spins"`, or `"nulls"`).
+#' @param perm_method Correlation permutation method (`"eigen"` or `"nulls"`).
 #'   Default is `"eigen"`.
 #' @param fs_surrogate Optional precomputed surrogate matrix for
 #'   `perm_method = "nulls"` or `"eigen"`. For `"eigen"`, you can also
 #'   pass the raw list returned by `fsnull::fs_create_eigenstraps()`
 #'   (with `lh` and `rh`), which will be combined automatically.
-#' @param cor_method Correlation method passed to `fsdecode` (`"pearson"` or `"spearman"`).
+#' @param cor_method Correlation method (`"pearson"` or `"spearman"`).
 #'   Default is `"pearson"`.
 #' @param absolute_r Logical; if `TRUE`, stores absolute values of `r`.
 #' @param mc_cores Number of cores used for Unix `mclapply`.
@@ -76,23 +50,13 @@ rdoc_spatial_cor_spins_pairwise <- function(fs_x,
 rdoc_decode <- function(fs_overlay,
                         save_results = FALSE,
                         results_file = NULL,
-                        perm_method = c("eigen", "spins", "nulls"),
+                        perm_method = c("eigen", "nulls"),
                         fs_surrogate = NULL,
                         cor_method = c("pearson", "spearman"),
                         absolute_r = FALSE,
                         mc_cores = max(1L, parallel::detectCores() - 1L)) {
   perm_method <- match.arg(perm_method)
   cor_method <- match.arg(cor_method)
-
-  if (!requireNamespace("fsdecode", quietly = TRUE)) {
-    stop("Package `fsdecode` is required for `rdoc_decode()`.", call. = FALSE)
-  }
-  if (perm_method == "spins" && !requireNamespace("fsnull", quietly = TRUE)) {
-    stop(
-      "Package `fsnull` is required when `perm_method` is `\"spins\"`.",
-      call. = FALSE
-    )
-  }
 
   terms_path <- rdoc_terms_file()
   terms <- readRDS(terms_path)
@@ -144,26 +108,18 @@ rdoc_decode <- function(fs_overlay,
   cor_fun <- switch(
     perm_method,
     eigen = function(i) {
-      fsdecode::fs_spatial_cor_with_nulls(
-        fs_overlay,
-        terms[[i]],
-        fs.x.nulls = fs_surrogate,
+      rdoc_spatial_cor_with_nulls_pairwise(
+        x = fs_overlay,
+        y = terms[[i]],
+        x_nulls = fs_surrogate,
         method = cor_method
       )
     },
-    spins = function(i) {
-      rdoc_spatial_cor_spins_pairwise(
-        fs_x = fs_overlay,
-        fs_y = terms[[i]],
-        method = cor_method,
-        use = "pairwise.complete.obs"
-      )
-    },
     nulls = function(i) {
-      fsdecode::fs_spatial_cor_with_nulls(
-        fs_overlay,
-        terms[[i]],
-        fs.x.nulls = fs_surrogate,
+      rdoc_spatial_cor_with_nulls_pairwise(
+        x = fs_overlay,
+        y = terms[[i]],
+        x_nulls = fs_surrogate,
         method = cor_method
       )
     }
