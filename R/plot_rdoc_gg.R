@@ -125,6 +125,10 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #' @param angular_gap_domain Angular gap between adjacent domains in the outer ring.
 #' @param radial_gap_domains Radial gap between middle and outer rings.
 #' @param significance_level Threshold used to draw significance stars (`p < threshold`).
+#' @param scale_bar_to Maximum absolute correlation represented by a full-height
+#'   bar. Use `"max"` (the default) to scale bars to the largest absolute
+#'   correlation in `corr_df`, or supply a number in `(0, 1]` that is at least
+#'   as large as every absolute correlation in `corr_df`.
 #' @param show_term_labels Logical; draw term labels outside the domain ribbon.
 #' @param expand_domain_labels Logical; when `TRUE`, domain codes are expanded
 #'   in the outer ring labels (for example `CS` to `Cognitive Systems`), and
@@ -176,7 +180,8 @@ rdoc_circleplot <- function(corr_df,
                             expand_term_abbreviations = TRUE,
                             term_label_wrap_width = 28,
                             correlation_label = c("pearson", "spearman"),
-                            show_correlation_legend = TRUE) {
+                            show_correlation_legend = TRUE,
+                            scale_bar_to = "max") {
   correlation_label <- match.arg(correlation_label)
   corr_df <- rdoc_validate_corr_df(corr_df)
   corr_df <- corr_df[order(corr_df$Domain, corr_df$Term), , drop = FALSE]
@@ -208,9 +213,29 @@ rdoc_circleplot <- function(corr_df,
   gap_after_construct <- radial_gap_domains
   domain_thick <- 0.40
 
-  max_abs_r <- max(abs(corr_df$r), na.rm = TRUE)
-  if (!is.finite(max_abs_r) || max_abs_r == 0) {
-    max_abs_r <- 1
+  observed_max_abs_r <- max(abs(corr_df$r), na.rm = TRUE)
+  if (identical(scale_bar_to, "max")) {
+    max_abs_r <- observed_max_abs_r
+    if (!is.finite(max_abs_r) || max_abs_r == 0) {
+      max_abs_r <- 1
+    }
+  } else {
+    if (!is.numeric(scale_bar_to) || length(scale_bar_to) != 1L ||
+        is.na(scale_bar_to) || !is.finite(scale_bar_to) ||
+        scale_bar_to <= 0 || scale_bar_to > 1) {
+      stop("`scale_bar_to` must be \"max\" or a single number in (0, 1].", call. = FALSE)
+    }
+    if (observed_max_abs_r > scale_bar_to) {
+      stop(
+        sprintf(
+          "`scale_bar_to` (%g) must be at least the largest absolute correlation (%g).",
+          scale_bar_to,
+          observed_max_abs_r
+        ),
+        call. = FALSE
+      )
+    }
+    max_abs_r <- scale_bar_to
   }
 
   corr_df$r_height <- abs(corr_df$r) / max_abs_r

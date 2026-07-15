@@ -27,7 +27,8 @@ rdoc_circleplot(
   expand_term_abbreviations = TRUE,
   term_label_wrap_width = 28,
   correlation_label = c("pearson", "spearman"),
-  show_correlation_legend = TRUE
+  show_correlation_legend = TRUE,
+  scale_bar_to = "max"
 )
 }
 \arguments{
@@ -49,6 +50,11 @@ rdoc_circleplot(
 \item{radial_gap_domains}{Radial gap between middle and outer rings.}
 
 \item{significance_level}{Threshold used to draw significance stars (\code{p < threshold}).}
+
+\item{scale_bar_to}{Maximum absolute correlation represented by a full-height
+bar. Use \code{"max"} (the default) to scale bars to the largest absolute
+correlation in \code{corr_df}, or supply a number in \code{(0, 1]} that is at
+least as large as every absolute correlation in \code{corr_df}.}
 
 \item{show_term_labels}{Logical; draw term labels outside the domain ribbon.}
 
