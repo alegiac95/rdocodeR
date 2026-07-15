@@ -20,7 +20,8 @@
 #' @param correlation_label Label style used for the correlation legend:
 #'   `"pearson"` (default, `Pearson r`) or `"spearman"` (`Spearman rho`).
 #' @param show_correlation_legend Logical; show correlation color legend.
-#'   When `TRUE` (default), the legend is placed in the lower-right corner.
+#'   When `TRUE` (default), the legend is placed in the lower-right corner. Its
+#'   range is inferred from all `r` values in `corr_list`.
 #' @param cut_deg Trim angle (degrees) removed from each end of the semicircle.
 #' @param output_file Optional output path. If provided, plot is saved with
 #'   [ggplot2::ggsave()].
@@ -341,6 +342,7 @@ rdoc_compare_fanplot <- function(corr_list,
     domain_ring_outer + 0.07
   }
   legend_position_value <- if (isTRUE(show_correlation_legend)) c(0.98, 0.03) else "none"
+  correlation_limits <- rdoc_correlation_limits(corr_list)
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_rect(
@@ -361,7 +363,8 @@ rdoc_compare_fanplot <- function(corr_list,
       correlation_label = correlation_label,
       na_fill = "grey90",
       barheight_pt = 58,
-      barwidth_pt = 16
+      barwidth_pt = 16,
+      limits = correlation_limits
     ) +
     ggnewscale::new_scale_fill() +
     ggplot2::geom_rect(

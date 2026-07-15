@@ -184,7 +184,8 @@ rdoc_wrap_multiline <- function(x, width = 22) {
 #' @param na_fill Fill color for missing term-condition cells (for example when
 #'   `term_alignment = "union"` and a term is absent in one condition).
 #' @param correlation_label Label style used for the correlation legend:
-#'   `"pearson"` (default, `Pearson r`) or `"spearman"` (`Spearman rho`).
+#'   `"pearson"` (default, `Pearson r`) or `"spearman"` (`Spearman rho`). The
+#'   legend range is inferred from all `r` values in `corr_list`.
 #' @param output_file Optional output path. If provided, plot is saved with
 #'   [ggplot2::ggsave()].
 #' @param width,height Figure size in inches when `output_file` is provided.
@@ -225,6 +226,7 @@ rdoc_compare_heatplot <- function(corr_list,
   term_alignment <- match.arg(term_alignment)
   correlation_label <- match.arg(correlation_label)
   validated <- rdoc_validate_compare_list(corr_list, term_alignment = term_alignment)
+  correlation_limits <- rdoc_correlation_limits(corr_list)
   corr_data <- validated$data
   cond_names <- validated$condition_names
   term_levels <- validated$terms
@@ -371,7 +373,8 @@ rdoc_compare_heatplot <- function(corr_list,
     ) +
     rdoc_correlation_scale(
       correlation_label = correlation_label,
-      na_fill = na_fill
+      na_fill = na_fill,
+      limits = correlation_limits
     ) +
     ggplot2::scale_y_continuous(
       breaks = as.numeric(condition_y_map[cond_names]),

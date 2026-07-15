@@ -89,7 +89,9 @@ and \code{WM} to Working Memory.}
 \code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}).}
 
 \item{show_correlation_legend}{Logical; show correlation color legend.
-When \code{TRUE} (default), the legend is placed in the lower-right corner.}
+When \code{TRUE} (default), the legend is placed in the lower-right corner. Its
+range is inferred from \code{r}: 0 to 1 for nonnegative values, -1 to 0 for
+nonpositive values, and -1 to 1 when both signs occur.}
 }
 \value{
 A ggplot object.

@@ -150,7 +150,9 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #' @param correlation_label Label style used for the correlation legend:
 #'   `"pearson"` (default, `Pearson r`) or `"spearman"` (`Spearman rho`).
 #' @param show_correlation_legend Logical; show correlation color legend.
-#'   When `TRUE` (default), the legend is placed in the lower-right corner.
+#'   When `TRUE` (default), the legend is placed in the lower-right corner. Its
+#'   range is inferred from `r`: 0 to 1 for nonnegative values, -1 to 0 for
+#'   nonpositive values, and -1 to 1 when both signs occur.
 #'
 #' @return A ggplot object.
 #' @examples
@@ -350,6 +352,7 @@ rdoc_circleplot <- function(corr_df,
     bar_value_df$bar_label_angle
   )
   legend_position_value <- if (isTRUE(show_correlation_legend)) c(0.98, 0.03) else "none"
+  correlation_limits <- rdoc_correlation_limits(corr_df)
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_rect(
@@ -408,7 +411,8 @@ rdoc_circleplot <- function(corr_df,
       correlation_label = correlation_label,
       na_fill = "grey90",
       barheight_pt = 58,
-      barwidth_pt = 16
+      barwidth_pt = 16,
+      limits = correlation_limits
     ) +
     ggplot2::geom_text(
       data = star_df,
