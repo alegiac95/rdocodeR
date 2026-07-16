@@ -72,7 +72,8 @@ Ignored when \code{show_term_labels = TRUE}.}
 \code{term_alignment = "union"} and a term is absent in one condition).}
 
 \item{correlation_label}{Label style used for the correlation legend:
-\code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}).}
+\code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}). The
+legend range is inferred from all \code{r} values in \code{corr_list}.}
 
 \item{output_file}{Optional output path. If provided, plot is saved with
 \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}.}

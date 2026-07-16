@@ -42,7 +42,8 @@ outside the fan as radial labels, similar to the circular plot.}
 \code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}).}
 
 \item{show_correlation_legend}{Logical; show correlation color legend.
-When \code{TRUE} (default), the legend is placed in the lower-right corner.}
+When \code{TRUE} (default), the legend is placed in the lower-right corner. Its
+range is inferred from all \code{r} values in \code{corr_list}.}
 
 \item{cut_deg}{Trim angle (degrees) removed from each end of the semicircle.}
 
