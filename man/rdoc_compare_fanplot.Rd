@@ -17,7 +17,8 @@ rdoc_compare_fanplot(
   output_file = NULL,
   width = 13,
   height = 8.4,
-  dpi = 300
+  dpi = 300,
+  invert_outer_rings = FALSE
 )
 }
 \arguments{
@@ -36,7 +37,8 @@ and \code{"strict"} requires identical term sets.}
 
 \item{show_significant_term_labels}{Logical; when \code{TRUE}, show labels for
 terms with at least one significant result (\code{p < significance_level})
-outside the fan as radial labels, similar to the circular plot.}
+outside the fan as radial labels, or inside the outer term bars when
+\code{invert_outer_rings = TRUE}.}
 
 \item{correlation_label}{Label style used for the correlation legend:
 \code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}).}
@@ -53,6 +55,11 @@ range is inferred from all \code{r} values in \code{corr_list}.}
 \item{width, height}{Figure size in inches when \code{output_file} is provided.}
 
 \item{dpi}{Resolution when \code{output_file} is provided.}
+
+\item{invert_outer_rings}{Logical; when \code{TRUE}, place the domain ring inside
+the term ring, with significant term labels inside wider term bars. The
+inner domain ring uses compact domain codes. The term ring stays compact
+when no term labels are displayed.}
 }
 \value{
 A ggplot object.

@@ -142,6 +142,11 @@ p_circle_inverted <- rdoc_circleplot(df, invert_outer_rings = TRUE)
 p_circle_inverted
 ```
 
+![rdoc inverted circleplot example](man/figures/readme-circleplot-inverted.png)
+
+With `invert_outer_rings = TRUE`, `show_term_labels = FALSE` keeps the outer
+term ring compact instead of reserving space for labels.
+
 ### 3) Compare Multiple Decoding Tables (n >= 2)
 
 ```r
@@ -173,6 +178,24 @@ p_fan
 ![rdoc heatplot example](man/figures/readme-heatplot.png)
 
 ![rdoc fanplot example](man/figures/readme-fanplot.png)
+
+The fanplot also supports an inner domain ring and labels inside the outer
+term bars. Its labels identify terms significant in at least one condition:
+
+```r
+p_fan_inverted <- rdoc_compare_fanplot(
+  corr_list = list(Sample_A = df1, Sample_B = df2, Sample_C = df3),
+  invert_outer_rings = TRUE,
+  show_significant_term_labels = TRUE
+)
+p_fan_inverted
+```
+
+![rdoc inverted fanplot example](man/figures/readme-fanplot-inverted.png)
+
+Set `show_significant_term_labels = FALSE` to keep the inverted term ring
+compact. Both plots also keep it compact when significance filtering leaves
+no term labels to display.
 
 ### Standalone Helpers
 

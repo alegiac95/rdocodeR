@@ -157,7 +157,8 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #'   range is inferred from `r`: 0 to 1 for nonnegative values, -1 to 0 for
 #'   nonpositive values, and -1 to 1 when both signs occur.
 #' @param invert_outer_rings Logical; when `TRUE`, place the domain ring inside
-#'   the term ring and widen the outer term bars to hold their labels.
+#'   the term ring and widen the outer term bars to hold their labels. The term
+#'   ring stays compact when no term labels are displayed.
 #'
 #' @return A ggplot object.
 #' @examples
@@ -217,7 +218,10 @@ rdoc_circleplot <- function(corr_df,
   bar_inner <- 0.7
   bar_max_height <- 1.0
   gap_after_bars <- 0.15
-  construct_thick <- if (isTRUE(invert_outer_rings)) 2.6 else 0.25
+  has_term_labels <- isTRUE(show_term_labels) &&
+    (!isTRUE(show_only_significant_term_labels) ||
+      any(!is.na(corr_df$p) & corr_df$p < significance_level))
+  construct_thick <- if (isTRUE(invert_outer_rings) && has_term_labels) 2.6 else 0.25
   gap_after_construct <- radial_gap_domains
   domain_thick <- 0.40
 

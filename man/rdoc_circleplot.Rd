@@ -98,7 +98,8 @@ correlation in \code{corr_df}, or supply a number in \verb{(0, 1]} that is at le
 as large as every absolute correlation in \code{corr_df}.}
 
 \item{invert_outer_rings}{Logical; when \code{TRUE}, place the domain ring inside
-the term ring and widen the outer term bars to hold their labels.}
+the term ring and widen the outer term bars to hold their labels. The term
+ring stays compact when no term labels are displayed.}
 }
 \value{
 A ggplot object.

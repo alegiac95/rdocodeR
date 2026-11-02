@@ -16,7 +16,8 @@
 #' @param show_significance_stars Logical; draw `*` on significant cells.
 #' @param show_significant_term_labels Logical; when `TRUE`, show labels for
 #'   terms with at least one significant result (`p < significance_level`)
-#'   outside the fan as radial labels, similar to the circular plot.
+#'   outside the fan as radial labels, or inside the outer term bars when
+#'   `invert_outer_rings = TRUE`.
 #' @param correlation_label Label style used for the correlation legend:
 #'   `"pearson"` (default, `Pearson r`) or `"spearman"` (`Spearman rho`).
 #' @param show_correlation_legend Logical; show correlation color legend.
@@ -27,6 +28,10 @@
 #'   [ggplot2::ggsave()].
 #' @param width,height Figure size in inches when `output_file` is provided.
 #' @param dpi Resolution when `output_file` is provided.
+#' @param invert_outer_rings Logical; when `TRUE`, place the domain ring inside
+#'   the term ring, with significant term labels inside wider term bars. The
+#'   inner domain ring uses compact domain codes. The term ring stays compact
+#'   when no term labels are displayed.
 #'
 #' @return A ggplot object.
 #' @examples
@@ -49,7 +54,8 @@ rdoc_compare_fanplot <- function(corr_list,
                                  output_file = NULL,
                                  width = 13,
                                  height = 8.4,
-                                 dpi = 300) {
+                                 dpi = 300,
+                                 invert_outer_rings = FALSE) {
   term_alignment <- match.arg(term_alignment)
   correlation_label <- match.arg(correlation_label)
 
@@ -187,6 +193,7 @@ rdoc_compare_fanplot <- function(corr_list,
     )
   }))
   heat_df$sig <- !is.na(heat_df$p) & heat_df$p < significance_level
+  has_term_labels <- isTRUE(show_significant_term_labels) && any(heat_df$sig)
 
   heat_outer <- heat_inner + n_conditions * row_h
   inner_outer <- heat_inner - inner_gap_to_heat
@@ -212,7 +219,16 @@ rdoc_compare_fanplot <- function(corr_list,
   inner_df <- dplyr::select(inner_df, xmin, xmax, ymin, ymax, shade)
 
   term_ring_inner <- heat_outer + heat_to_term_gap
+  domain_ring_inner <- term_ring_inner + term_ring_h + 0.02
+  if (isTRUE(invert_outer_rings)) {
+    domain_ring_inner <- term_ring_inner
+    term_ring_inner <- domain_ring_inner + 0.132 + 0.02
+    if (has_term_labels) {
+      term_ring_h <- max(0.9, term_ring_inner * 0.8)
+    }
+  }
   term_ring_outer <- term_ring_inner + term_ring_h
+  domain_ring_outer <- domain_ring_inner + 0.132
 
   term_ring_df <- data.frame(
     Term = term_levels,
@@ -229,6 +245,9 @@ rdoc_compare_fanplot <- function(corr_list,
     label <- as.character(dom)
     if (label %in% names(domain_label_map)) {
       label <- unname(domain_label_map[[label]])
+    }
+    if (isTRUE(invert_outer_rings)) {
+      label <- rdoc_compact_domain_labels(dom)
     }
 
     data.frame(
@@ -247,8 +266,6 @@ rdoc_compare_fanplot <- function(corr_list,
     domain_df$n_terms <= 5 ~ 3.00,
     TRUE ~ 3.35
   )
-  domain_ring_inner <- term_ring_outer + 0.02
-  domain_ring_outer <- domain_ring_inner + 0.132
   domain_ring_df <- domain_df
   domain_ring_df$ymin <- domain_ring_inner
   domain_ring_df$ymax <- domain_ring_outer
@@ -317,6 +334,12 @@ rdoc_compare_fanplot <- function(corr_list,
     # from the domain ring for a cleaner outer-label baseline.
     term_label_df$y_start <- domain_ring_outer + 0.075
     term_label_df$y_end <- term_label_df$y_start + 0.34
+    term_label_df$text_col <- "black"
+    if (isTRUE(invert_outer_rings)) {
+      term_label_df$y_start <- term_ring_inner + 0.04
+      term_label_df$y_end <- term_ring_outer - 0.04
+      term_label_df$text_col <- rdoc_contrast_color(term_cols[term_label_df$Term])
+    }
 
     term_label_paths <- dplyr::bind_rows(lapply(seq_len(nrow(term_label_df)), function(i) {
       y_pair <- if (isTRUE(term_label_df$reverse[i])) {
@@ -329,6 +352,7 @@ rdoc_compare_fanplot <- function(corr_list,
         label = term_label_df$label[i],
         x = c(term_label_df$x_mid[i], term_label_df$x_mid[i]),
         y = y_pair,
+        text_col = term_label_df$text_col[i],
         reverse = isTRUE(term_label_df$reverse[i]),
         stringsAsFactors = FALSE
       )
@@ -336,10 +360,10 @@ rdoc_compare_fanplot <- function(corr_list,
     term_label_paths_fwd <- term_label_paths[!term_label_paths$reverse, , drop = FALSE]
     term_label_paths_rev <- term_label_paths[term_label_paths$reverse, , drop = FALSE]
   }
-  y_upper <- if (isTRUE(show_significant_term_labels) && nrow(term_label_df) > 0) {
+  y_upper <- if (has_term_labels && !isTRUE(invert_outer_rings)) {
     max(term_label_df$y_end) + 0.06
   } else {
-    domain_ring_outer + 0.07
+    max(domain_ring_outer, term_ring_outer) + 0.07
   }
   legend_position_value <- if (isTRUE(show_correlation_legend)) c(0.98, 0.03) else "none"
   correlation_limits <- rdoc_correlation_limits(corr_list)
@@ -440,15 +464,15 @@ rdoc_compare_fanplot <- function(corr_list,
                 x = x,
                 y = y,
                 label = label,
-                group = grp
+                group = grp,
+                colour = text_col
               ),
               linecolour = NA,
               linewidth = 0,
               size = 2.3,
               lineheight = 0.9,
-              colour = "black",
               fontface = "plain",
-              hjust = 0,
+              hjust = if (isTRUE(invert_outer_rings)) 0.5 else 0,
               upright = FALSE,
               text_smoothing = 0,
               vjust = 0.5,
@@ -462,15 +486,15 @@ rdoc_compare_fanplot <- function(corr_list,
                 x = x,
                 y = y,
                 label = label,
-                group = grp
+                group = grp,
+                colour = text_col
               ),
               linecolour = NA,
               linewidth = 0,
               size = 2.3,
               lineheight = 0.9,
-              colour = "black",
               fontface = "plain",
-              hjust = 1,
+              hjust = if (isTRUE(invert_outer_rings)) 0.5 else 1,
               upright = FALSE,
               text_smoothing = 0,
               vjust = 0.5,
