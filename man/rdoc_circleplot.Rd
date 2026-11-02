@@ -28,7 +28,8 @@ rdoc_circleplot(
   term_label_wrap_width = 28,
   correlation_label = c("pearson", "spearman"),
   show_correlation_legend = TRUE,
-  scale_bar_to = "max"
+  scale_bar_to = "max",
+  invert_outer_rings = FALSE
 )
 }
 \arguments{
@@ -43,23 +44,19 @@ rdoc_circleplot(
 
 \item{dpi}{Resolution when \code{output_file} is provided.}
 
-\item{angular_gap_term}{Angular gap between adjacent terms in the middle ring.}
+\item{angular_gap_term}{Angular gap between adjacent terms in the term ring.}
 
-\item{angular_gap_domain}{Angular gap between adjacent domains in the outer ring.}
+\item{angular_gap_domain}{Angular gap between adjacent domains in the domain ring.}
 
 \item{radial_gap_domains}{Radial gap between middle and outer rings.}
 
 \item{significance_level}{Threshold used to draw significance stars (\code{p < threshold}).}
 
-\item{scale_bar_to}{Maximum absolute correlation represented by a full-height
-bar. Use \code{"max"} (the default) to scale bars to the largest absolute
-correlation in \code{corr_df}, or supply a number in \code{(0, 1]} that is at
-least as large as every absolute correlation in \code{corr_df}.}
-
-\item{show_term_labels}{Logical; draw term labels outside the domain ribbon.}
+\item{show_term_labels}{Logical; draw term labels outside the domain ribbon,
+or inside the term bars when \code{invert_outer_rings = TRUE}.}
 
 \item{expand_domain_labels}{Logical; when \code{TRUE}, domain codes are expanded
-in the outer ring labels (for example \code{CS} to \verb{Cognitive Systems}), and
+in the domain ring labels (for example \code{CS} to \verb{Cognitive Systems}), and
 long labels can be wrapped (for example \verb{Systems for Social Processes}).}
 
 \item{highlight_significant_terms}{Logical; when \code{TRUE}, term labels with
@@ -75,15 +72,17 @@ significant bars (\code{p < significance_level}) inside the bars.}
 
 \item{bar_value_size}{Text size for bar value labels.}
 
-\item{term_label_offset}{Radial offset for external term labels.}
+\item{term_label_offset}{Radial offset for external term labels; ignored when
+\code{invert_outer_rings = TRUE}.}
 
-\item{term_label_size}{Text size for external term labels.}
+\item{term_label_size}{Text size for term labels.}
 
 \item{expand_term_abbreviations}{Logical; expand abbreviations in term labels:
 \code{RL} to Reinforcement Learning, \code{CC} to Cognitive Control,
 and \code{WM} to Working Memory.}
 
-\item{term_label_wrap_width}{Target width for two-line label wrapping.}
+\item{term_label_wrap_width}{Target width for label wrapping. External labels
+use at most two lines; labels inside the term bars can use more lines.}
 
 \item{correlation_label}{Label style used for the correlation legend:
 \code{"pearson"} (default, \verb{Pearson r}) or \code{"spearman"} (\verb{Spearman rho}).}
@@ -92,13 +91,21 @@ and \code{WM} to Working Memory.}
 When \code{TRUE} (default), the legend is placed in the lower-right corner. Its
 range is inferred from \code{r}: 0 to 1 for nonnegative values, -1 to 0 for
 nonpositive values, and -1 to 1 when both signs occur.}
+
+\item{scale_bar_to}{Maximum absolute correlation represented by a full-height
+bar. Use \code{"max"} (the default) to scale bars to the largest absolute
+correlation in \code{corr_df}, or supply a number in \verb{(0, 1]} that is at least
+as large as every absolute correlation in \code{corr_df}.}
+
+\item{invert_outer_rings}{Logical; when \code{TRUE}, place the domain ring inside
+the term ring and widen the outer term bars to hold their labels.}
 }
 \value{
 A ggplot object.
 }
 \description{
 Creates a circular RDoC plot using ggplot2 with three bands:
-outer domains, middle constructs, and inner correlation bars.
+outer domains, middle constructs, and inner correlation bars by default.
 }
 \examples{
 df <- rdoc_example_data()

@@ -113,7 +113,7 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #' Plot Circular RDoC Correlations with ggplot2
 #'
 #' Creates a circular RDoC plot using ggplot2 with three bands:
-#' outer domains, middle constructs, and inner correlation bars.
+#' outer domains, middle constructs, and inner correlation bars by default.
 #'
 #' @param corr_df Data frame with columns `Domain`, `Term`, `r`, and optional `p`.
 #'   `Term` must be unique.
@@ -121,17 +121,18 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #' @param output_file Optional output path. If provided, plot is saved with [ggplot2::ggsave()].
 #' @param width,height Figure size in inches when `output_file` is provided.
 #' @param dpi Resolution when `output_file` is provided.
-#' @param angular_gap_term Angular gap between adjacent terms in the middle ring.
-#' @param angular_gap_domain Angular gap between adjacent domains in the outer ring.
+#' @param angular_gap_term Angular gap between adjacent terms in the term ring.
+#' @param angular_gap_domain Angular gap between adjacent domains in the domain ring.
 #' @param radial_gap_domains Radial gap between middle and outer rings.
 #' @param significance_level Threshold used to draw significance stars (`p < threshold`).
 #' @param scale_bar_to Maximum absolute correlation represented by a full-height
 #'   bar. Use `"max"` (the default) to scale bars to the largest absolute
 #'   correlation in `corr_df`, or supply a number in `(0, 1]` that is at least
 #'   as large as every absolute correlation in `corr_df`.
-#' @param show_term_labels Logical; draw term labels outside the domain ribbon.
+#' @param show_term_labels Logical; draw term labels outside the domain ribbon,
+#'   or inside the term bars when `invert_outer_rings = TRUE`.
 #' @param expand_domain_labels Logical; when `TRUE`, domain codes are expanded
-#'   in the outer ring labels (for example `CS` to `Cognitive Systems`), and
+#'   in the domain ring labels (for example `CS` to `Cognitive Systems`), and
 #'   long labels can be wrapped (for example `Systems for Social Processes`).
 #' @param highlight_significant_terms Logical; when `TRUE`, term labels with
 #'   `p < significance_level` are drawn in bold.
@@ -141,18 +142,22 @@ rdoc_make_two_line_label <- function(x, wrap_width = 28) {
 #'   significant bars (`p < significance_level`) inside the bars.
 #' @param bar_value_digits Number of decimals used for bar value labels.
 #' @param bar_value_size Text size for bar value labels.
-#' @param term_label_offset Radial offset for external term labels.
-#' @param term_label_size Text size for external term labels.
+#' @param term_label_offset Radial offset for external term labels; ignored when
+#'   `invert_outer_rings = TRUE`.
+#' @param term_label_size Text size for term labels.
 #' @param expand_term_abbreviations Logical; expand abbreviations in term labels:
 #'   `RL` to Reinforcement Learning, `CC` to Cognitive Control,
 #'   and `WM` to Working Memory.
-#' @param term_label_wrap_width Target width for two-line label wrapping.
+#' @param term_label_wrap_width Target width for label wrapping. External labels
+#'   use at most two lines; labels inside the term bars can use more lines.
 #' @param correlation_label Label style used for the correlation legend:
 #'   `"pearson"` (default, `Pearson r`) or `"spearman"` (`Spearman rho`).
 #' @param show_correlation_legend Logical; show correlation color legend.
 #'   When `TRUE` (default), the legend is placed in the lower-right corner. Its
 #'   range is inferred from `r`: 0 to 1 for nonnegative values, -1 to 0 for
 #'   nonpositive values, and -1 to 1 when both signs occur.
+#' @param invert_outer_rings Logical; when `TRUE`, place the domain ring inside
+#'   the term ring and widen the outer term bars to hold their labels.
 #'
 #' @return A ggplot object.
 #' @examples
@@ -183,7 +188,8 @@ rdoc_circleplot <- function(corr_df,
                             term_label_wrap_width = 28,
                             correlation_label = c("pearson", "spearman"),
                             show_correlation_legend = TRUE,
-                            scale_bar_to = "max") {
+                            scale_bar_to = "max",
+                            invert_outer_rings = FALSE) {
   correlation_label <- match.arg(correlation_label)
   corr_df <- rdoc_validate_corr_df(corr_df)
   corr_df <- corr_df[order(corr_df$Domain, corr_df$Term), , drop = FALSE]
@@ -211,7 +217,7 @@ rdoc_circleplot <- function(corr_df,
   bar_inner <- 0.7
   bar_max_height <- 1.0
   gap_after_bars <- 0.15
-  construct_thick <- 0.25
+  construct_thick <- if (isTRUE(invert_outer_rings)) 2.6 else 0.25
   gap_after_construct <- radial_gap_domains
   domain_thick <- 0.40
 
@@ -247,7 +253,13 @@ rdoc_circleplot <- function(corr_df,
   corr_df$bar_xmax <- corr_df$id_num + 0.4
 
   construct_inner <- bar_inner + bar_max_height + gap_after_bars
+  domain_inner <- construct_inner + construct_thick + gap_after_construct
+  if (isTRUE(invert_outer_rings)) {
+    domain_inner <- construct_inner
+    construct_inner <- domain_inner + domain_thick + gap_after_construct
+  }
   construct_outer <- construct_inner + construct_thick
+  domain_outer <- domain_inner + domain_thick
 
   construct_df <- data.frame(
     Domain = corr_df$Domain,
@@ -258,9 +270,6 @@ rdoc_circleplot <- function(corr_df,
     ymin = construct_inner,
     ymax = construct_outer
   )
-
-  domain_inner <- construct_outer + gap_after_construct
-  domain_outer <- domain_inner + domain_thick
 
   domain_df <- do.call(
     rbind,
@@ -306,17 +315,29 @@ rdoc_circleplot <- function(corr_df,
   if (isTRUE(expand_term_abbreviations)) {
     term_labels <- rdoc_expand_label_abbreviations(term_labels)
   }
-  term_label_df$term_label <- vapply(
-    term_labels,
-    rdoc_make_two_line_label,
-    character(1),
-    wrap_width = term_label_wrap_width
-  )
+  term_label_df$term_label <- if (isTRUE(invert_outer_rings)) {
+    vapply(term_labels, function(label) {
+      paste(strwrap(label, width = term_label_wrap_width), collapse = "\n")
+    }, character(1))
+  } else {
+    vapply(
+      term_labels,
+      rdoc_make_two_line_label,
+      character(1),
+      wrap_width = term_label_wrap_width
+    )
+  }
   term_label_df$label_y <- domain_outer + term_label_offset
   term_label_df$angle <- 90 - 360 * (term_label_df$id_num - 0.5) / n_terms
   term_label_df$label_hjust <- ifelse(term_label_df$angle < -90, 1, 0)
   term_label_df$angle <- ifelse(term_label_df$angle < -90, term_label_df$angle + 180, term_label_df$angle)
   term_label_df$label_face <- "plain"
+  term_label_df$text_col <- "black"
+  if (isTRUE(invert_outer_rings)) {
+    term_label_df$label_y <- (construct_inner + construct_outer) / 2
+    term_label_df$label_hjust <- 0.5
+    term_label_df$text_col <- rdoc_contrast_color(term_cols[as.character(term_label_df$Term)])
+  }
   if (isTRUE(highlight_significant_terms)) {
     term_label_df$label_face <- ifelse(
       !is.na(term_label_df$p) & term_label_df$p < significance_level,
@@ -332,8 +353,8 @@ rdoc_circleplot <- function(corr_df,
     ]
   }
 
-  radius_max <- domain_outer + 0.1
-  if (isTRUE(show_term_labels)) {
+  radius_max <- max(domain_outer, construct_outer) + 0.1
+  if (isTRUE(show_term_labels) && !isTRUE(invert_outer_rings)) {
     radius_max <- max(radius_max, domain_outer + term_label_offset + 0.35)
   }
   star_df <- corr_df[!is.na(corr_df$p) & corr_df$p < significance_level, , drop = FALSE]
@@ -454,10 +475,10 @@ rdoc_circleplot <- function(corr_df,
             label = term_label,
             angle = angle,
             hjust = label_hjust,
-            fontface = label_face
+            fontface = label_face,
+            colour = text_col
           ),
           size = term_label_size,
-          colour = "black",
           vjust = 0.5,
           lineheight = 0.9
         )

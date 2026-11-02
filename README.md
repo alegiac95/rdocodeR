@@ -134,6 +134,14 @@ p_circle
 
 ![rdoc circleplot example](man/figures/readme-circleplot.png)
 
+To place the domains inside the outer term ring, with term labels inside its
+colored bars:
+
+```r
+p_circle_inverted <- rdoc_circleplot(df, invert_outer_rings = TRUE)
+p_circle_inverted
+```
+
 ### 3) Compare Multiple Decoding Tables (n >= 2)
 
 ```r
